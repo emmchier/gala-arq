@@ -17,14 +17,18 @@ export default function HomePage() {
       sidebarTop={<MainNav />}
       sidebarBottom={<SocialLinks />}
     >
-      {/* Paso 0.3: solo el hueco del carrusel. Se construye en el paso 1.6. */}
-      <section aria-label="Proyectos destacados" className="flex flex-col gap-5">
-        <div className="flex items-center gap-[10px]">
+      {/* Paso 0.3: solo el hueco del carrusel. Se construye en el paso 1.6.
+          La Home entra en 100dvh, asi que la imagen toma el alto que sobra. */}
+      <section
+        aria-label="Proyectos destacados"
+        className="flex min-h-0 flex-1 flex-col gap-5"
+      >
+        <div className="flex shrink-0 items-center gap-[10px]">
           {DOTS.map((c) => (
             <span key={c} className={`size-[10px] rounded-full ${c}`} />
           ))}
         </div>
-        <div className="aspect-[820/513] w-full bg-[color:var(--color-secondary)]" />
+        <div className="min-h-0 w-full flex-1 bg-[color:var(--color-secondary)]" />
       </section>
     </PageFrame>
   );

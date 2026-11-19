@@ -232,8 +232,9 @@ Referencias: 🔴 next · 🟡 en curso · ✅ hecho · ⬜ pendiente
 | Organización de Sanity | ✅ **`Gala Arq`** = `ozejyyn9m`. El proyecto ya está transferido a ella (19/11/2026) |
 | Código | ✅ paso 0.1: Next 16.4.6 + React 19.3 + Tailwind 4.3 + TS 5.9 + shadcn (radix/nova) + Zustand 5.1 + OpenNext 1.20.17 |
 | Dataset de trabajo | `development` (se crea en el paso 1.1). `production` ya existe y queda vacío hasta la fase 3 |
-| Cuenta de Cloudflare | ✅ creada. ⚠️ El `account_id` **no se commitea** (repo público): va en `CLOUDFLARE_ACCOUNT_ID` |
-| Hosting | Cloudflare Workers — Worker no creado todavía |
+| Cuenta de Cloudflare | ✅ creada y autenticada con `wrangler login` |
+| Worker | ✅ **`gala-arq-dev`** desplegado · KV del cache: `NEXT_INC_CACHE_KV` |
+| URL | `https://gala-arq-dev.gala-arq.workers.dev` — ⚠️ **falta registrar el subdominio `workers.dev`** en el dashboard |
 | Dominio | a definir (§17.4) |
 | Idiomas | **`es` (default) + `en`** (§9) |
 | Assets de prueba | `assets/test-image.png` — ver §18.5 |
@@ -375,18 +376,29 @@ Todo el sitio vive en una grilla de columnas fijas. Medidas tomadas a **1366px**
 |← 64 →|                        page-container = 1238                        |← 64 →|
 ```
 
-**Listado y Ficha** comparten exactamente la misma grilla de tres columnas:
+> ⚠️ **El Figma está en píxeles duros, pero NO se implementa así.** Esas medidas se leen como
+> **tres proporciones fluidas: 25 / 25 / 50**, que valen a cualquier ancho de desktop.
+> Decisión del usuario, 19/11/2026.
+
+**Listado y Ficha** comparten la misma grilla:
 
 ```
-| sidebar 177 | gap 72 | columna de texto 288 | gap 72 | grilla de medios 629 |
-└──────────────────────── main#contenido = 1238 ────────────────────────┘
+|   25%    |   25%    |            50%            |
+| nav /    | ficha    | listado / galería         |
+| breadcrumb |        |                           |
+└────────── contenido = 100% ──────────────────────┘
 ```
 
-**Home** usa dos columnas:
+**Home:** la navegación toma el primer **25%** y el carrusel el **70%** alineado a la derecha,
+dejando 5% de aire entre las dos.
 
-```
-| sidebar 90 | gap 327 | sección de destacados 821 |
-```
+Los gaps del Figma (72px) **quedan absorbidos dentro de cada columna**: el contenido de cada una
+arranca en su borde izquierdo y el aire sobra al final. Por eso no hay un token de gap entre
+columnas.
+
+**Las celdas de la grilla son fluidas:** un tercio del 50%, menos los dos gaps de 8. A 1366px dan
+201px, contra los 204 del Figma. **Esa diferencia de 3px es correcta**, es el costo de que la
+grilla siga al navegador.
 
 | Medida | Valor |
 |---|---|
@@ -395,18 +407,25 @@ Todo el sitio vive en una grilla de columnas fijas. Medidas tomadas a **1366px**
 | `header.site-header` | 80 px de alto |
 | Separación header → `main` | 64 px (el main arranca en y=144) |
 | `footer.site-footer` | 48 px de alto |
-| Sidebar (Listado y Ficha) | 177 px |
-| Sidebar (Home) | 90 px |
-| Columna de texto | 288 px |
-| Grilla de medios | 629 px |
-| Carrusel de la Home | **70% del contenido**, alineado a la derecha |
-| Gap entre columnas | 72 px |
-| **Celda de la grilla de medios** | **204 × 204 px** |
+| Columna de navegación / breadcrumb | **25%** |
+| Columna de ficha | **25%** |
+| Columna de medios | **50%** |
+| Carrusel de la Home | **70%**, alineado a la derecha |
+| **Celda de la grilla de medios** | **fluida**: `(50% − 16px) / 3` |
 | Gap de la grilla de medios | 8 px |
-| Columnas de la grilla de medios | **3** |
+| Columnas de la grilla de medios | **3** (2 en mobile) |
 
-> `629 = 3 × 204 + 2 × 8`. La grilla de medios es la misma en Listado y en Ficha: **3 columnas,
-> celda cuadrada, gap de 8**. Un solo componente sirve para las dos pantallas.
+La grilla de medios es la misma en Listado y en Ficha: **3 columnas, celda cuadrada, gap de 8**.
+Un solo componente sirve para las dos pantallas.
+
+### Dos reglas de comportamiento, no de medida
+
+1. **La Home ocupa 100dvh exactas y no scrollea.** Todo el contenido entra en una pantalla: la
+   imagen del carrusel toma el alto que sobra entre el header y el footer.
+2. **En Listado y Ficha, la columna izquierda queda FIJA** mientras el resto scrollea. El
+   breadcrumb vive arriba de esa columna y `PREV · NEXT` abajo. Se implementa con `sticky`, no
+   con `fixed`: así la columna sigue perteneciendo a la grilla y no hay que replicar sus
+   posiciones a mano.
 
 **Cómo implementarla:** ✅ implementado en el paso 0.3, en `src/components/layout/page-frame.tsx`.
 
@@ -817,9 +836,11 @@ beta no se le pone encima el sitio de una clienta.
   sin problemas. El dato de que no lo soportaba quedó viejo.
 - No soporta el runtime `edge`: nada de `export const runtime = "edge"`.
 - Hace falta el service binding **`WORKER_SELF_REFERENCE`**. Si falta: **500 en `workers.dev`**.
-- El cache de ISR usa **R2**, no KV: es lo que trae la plantilla oficial del adaptador. Hay que
-  **crear el bucket antes del primer deploy**:
-  `pnpm wrangler r2 bucket create gala-arq-dev-opennext-cache`.
+- El cache de ISR usa **KV**. ⚠️ La plantilla oficial del adaptador usa **R2**, pero
+  **R2 hay que habilitarlo a mano en el dashboard y pide medio de pago**, lo que choca con el
+  objetivo de costo $0 (§17). KV viene con el plan free de Workers y alcanza de sobra.
+  Verificado el 19/11/2026: `r2 bucket create` falla con `code: 10042`,
+  "Please enable R2 through the Cloudflare Dashboard".
 
 ## 6.5 Entornos: develop y production
 
@@ -1266,6 +1287,9 @@ Ordenadas por cuándo bloquean:
 | **2026-11-19** | **El proyecto de Sanity se crea dentro de una organización**, para que el traspaso a Gala sea una transferencia soportada y no una migración a mano. |
 | **2026-11-19** | **El contenido dummy vive en Sanity**, no en fixtures locales: prueba el pipeline real y no se tira después. |
 | **2026-11-19** | **El carrusel de la Home pasa de 66.3% a 70%** del contenido, por pedido del usuario, para que sea consistente con la grilla. |
+| **2026-11-19** | **La grilla se lee como 25 / 25 / 50 fluido**, no como los píxeles duros del Figma. Las celdas siguen al ancho del navegador. |
+| **2026-11-19** | **La Home ocupa 100dvh y no scrollea.** |
+| **2026-11-19** | **La columna izquierda de Listado y Ficha queda fija** mientras el resto scrollea. |
 | **2026-11-19** | **Propuesta de mobile nuestra (§5.5)**, a refinar cuando el usuario la diseñe. Incluye bajar el tracking del cuerpo a `0.08em` y un botón `MENÚ` en las páginas internas. |
 | **2026-11-19** | **Se construye el portfolio de Gala, no un genérico previo** (§16.4). El código ya es neutro por diseño: contenido en Sanity y marca en tokens. El template se extrae con el cliente 2. |
 

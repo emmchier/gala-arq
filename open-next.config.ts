@@ -1,7 +1,10 @@
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
+import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
 
-// Cache de ISR en R2. El bucket se crea en el paso 0.4, antes del primer deploy.
+// Cache de ISR en KV, no en R2.
+// La plantilla oficial del adaptador usa R2, pero R2 hay que habilitarlo a
+// mano en el dashboard y pide medio de pago. KV viene con el plan free de
+// Workers y alcanza de sobra para un portfolio (spec §6.4).
 export default defineCloudflareConfig({
-  incrementalCache: r2IncrementalCache,
+  incrementalCache: kvIncrementalCache,
 });

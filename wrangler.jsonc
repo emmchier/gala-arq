@@ -22,12 +22,12 @@
     }
   ],
 
-  // Cache incremental de ISR. Crear el bucket antes del primer deploy:
-  //   pnpm wrangler r2 bucket create gala-arq-dev-opennext-cache
-  "r2_buckets": [
+  // Cache incremental de ISR en KV. R2 exige habilitarlo en el dashboard y
+  // pide medio de pago; KV viene con el plan free (spec §6.4).
+  "kv_namespaces": [
     {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "gala-arq-dev-opennext-cache"
+      "binding": "NEXT_INC_CACHE_KV",
+      "id": "79874aeeede64b1a833245f9cb5bd42b"
     }
   ],
 

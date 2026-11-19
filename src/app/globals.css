@@ -105,18 +105,18 @@
   --header-gap: 32px;
   --footer-h: 48px;
 
-  --col-sidebar: 177px;
-  --col-sidebar-home: 90px;
-  --col-text: 288px;
-  --col-media: 629px;
-  --col-gap: 72px;
+  /* La grilla es FLUIDA: 25 / 25 / 50 del contenido, a cualquier ancho de
+     desktop. El Figma esta en pixels duros (177 / 288 / 629 + gaps de 72),
+     pero eso se lee como estas tres proporciones, no como medidas fijas.
+     Decision del usuario, 19/11/2026. */
+  --col-nav: 25%;    /* navegacion en Home, breadcrumb en las internas */
+  --col-info: 25%;   /* ficha del proyecto */
+  --col-media: 50%;  /* listado y galeria */
 
-  --cell: 204px;
   --cell-gap: 8px;
 
-  /* Ancho del carrusel de la Home, alineado a la derecha.
-     En el Figma mide 820/1238 = 66.3%. El usuario lo subio a 70% el
-     19/11/2026 para que sea consistente con el resto de la grilla. */
+  /* Carrusel de la Home, alineado a la derecha. Deja 5% de aire contra la
+     navegacion, que ocupa el primer 25%. */
   --col-featured: 70%;
 }
 @media (width >= 64rem) {
