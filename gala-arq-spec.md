@@ -220,12 +220,14 @@ Referencias: 🔴 next · 🟡 en curso · ✅ hecho · ⬜ pendiente
 | **Figma** | **https://www.figma.com/design/emDsp7Xtbz8TVk8TU7suuC/Gala-Arq** |
 | `fileKey` de Figma | `emDsp7Xtbz8TVk8TU7suuC` |
 | Página de Figma a usar | **`High Fidelity`** (`33:4819`) — ver §4.1 |
-| Proyecto de Sanity | no creado todavía — anotar `projectId` acá |
-| Dataset | a definir (`production`) |
-| Hosting | Cloudflare Workers — no creado todavía |
+| Proyecto de Sanity | creándose — anotar `projectId` acá |
+| Organización de Sanity | ⬜ pendiente: se crea y se le adjunta el proyecto (§16.5) |
+| Dataset de trabajo | `development` (se crea en el paso 1.1) |
+| Cuenta de Cloudflare | ✅ creada. ⚠️ El `account_id` **no se commitea** (repo público): va en `CLOUDFLARE_ACCOUNT_ID` |
+| Hosting | Cloudflare Workers — Worker no creado todavía |
 | Dominio | a definir (§17.4) |
 | Idiomas | **`es` (default) + `en`** (§9) |
-| Assets de prueba | `assets/` — ver §18.5 |
+| Assets de prueba | `assets/test-image.png` — ver §18.5 |
 
 ---
 
@@ -1195,8 +1197,13 @@ colgada. Durante la construcción, el usuario trabaja solo, sin depender de logi
 | **Dominio** | **no se compra todavía** (§17.3) | lo compra Gala en su cuenta, o se transfiere |
 | **GitHub** | repo del usuario | se transfiere el repo o se la agrega como colaboradora |
 
-> 📌 **Lo más importante, y hay que hacerlo en el paso 1.1:** crear el proyecto de Sanity
-> **dentro de una organización**, no suelto en la cuenta personal. Transferir un proyecto **a una
+> 📌 **Lo más importante:** que el proyecto de Sanity **termine dentro de una organización**, no
+> suelto en la cuenta personal.
+>
+> ✅ **No hace falta acertarle en el onboarding.** Un proyecto personal se puede mover después:
+> *Settings → Danger zone → Transfer ownership → elegir la organización*. Hace falta ser
+> administrador del proyecto y de la organización destino, cosa que se cumple sola si las creó
+> la misma persona. Transferir un proyecto **a una
 > organización** es el camino soportado y documentado; mover un proyecto entre dos cuentas
 > personales es mucho más engorroso. Crear la organización al principio cuesta un minuto y ahorra
 > el dolor entero.
@@ -1377,9 +1384,7 @@ ellos**, no antes:
 - que el **recorte cuadrado** no arruine fotos de proporciones distintas, que es el riesgo real
   del diseño (§18.1).
 
-⚠️ El archivo de `assets/` se llama `img.project-image · Casa Elen.png`: **espacios y un `·` en
-el nombre**. Renombrarlo a algo como `casa-elen.png` antes de usarlo, o va a dar problemas en
-imports y en URLs.
+✅ El archivo está en `assets/test-image.png`.
 
 ## 18.4 Qué sube Gala
 
