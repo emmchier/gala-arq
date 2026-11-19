@@ -957,6 +957,10 @@ espeja datos del servidor es un bug esperando a pasar.
 
 ## 8.1 Documento `trabajo`
 
+> ⚠️ **El tipo se llama `trabajo`, no `proyecto`.** La navegación, el breadcrumb y la ruta dicen
+> "Trabajos", así que el contenido se llama igual. Renombrado el 19/11/2026, con una sola obra de
+> prueba cargada: era el último momento barato para hacerlo.
+
 | Campo | Tipo | Dónde se ve | Notas |
 |---|---|---|---|
 | `titulo` | `string` | card, ficha (h1) | **obligatorio** |
