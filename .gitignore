@@ -35,3 +35,4 @@ next-env.d.ts
 npm-debug.log*
 pnpm-debug.log*
 .pnpm-debug.log*
+src/sanity/extract.json

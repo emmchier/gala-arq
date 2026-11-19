@@ -9,10 +9,12 @@
     "lint": "eslint",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "typegen": "sanity schema extract --path=./src/sanity/extract.json --force && sanity typegen generate"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.20.17",
+    "@sanity/client": "^8.16.0",
     "@sanity/image-url": "^2.2.0",
     "@sanity/orderable-document-list": "^2.0.29",
     "@sanity/vision": "^6.24.0",

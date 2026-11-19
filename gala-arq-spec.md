@@ -25,25 +25,26 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `1.3` — Queries GROQ, typegen y contenido dummy
+> ### Paso `1.4` — Listado `/trabajos`
 >
-> **Estado:** no empezado. El `1.2` quedó ✅ el 19/11/2026.
+> **Estado:** no empezado. El `1.3` quedó ✅ el 19/11/2026.
 >
-> **Qué hay que hacer:**
-> 1. Queries en `src/sanity/queries/`, **centralizadas y nunca inline** (§8.5). Cada una pide
->    solo los campos que usa: el listado **no** trae `galeria` ni `descripcion`.
-> 2. Etiquetarlas con `next: { tags: [...] }` para poder invalidar por tipo en el paso 3.1.
-> 3. `sanity typegen` → tipos generados del schema y las queries. **Nada de tipar a mano.**
-> 4. **Contenido dummy** en `development` (§18.5): ~10 obras. Vive en Sanity, no en fixtures.
->    Ya hay una obra de prueba cargada (`proyecto-casa-elen`), sin imágenes.
+> **Qué hay que hacer:** conectar el listado a datos reales. El cascarón ya está (paso 0.3), la
+> query ya está (`TRABAJOS_LISTADO_QUERY`) y hay **10 trabajos dummy** cargados en `development`.
 >
-> ⚠️ **Para las imágenes dummy:** repetir `assets/test-image.png` es mejor que variarlas, porque
-> aísla el layout del contenido (§18.5).
+> 1. Componente `SanityImage` que envuelve `next/image` con `@sanity/image-url`, **siempre con
+>    `sizes` explícito** (§18.2).
+> 2. `ProjectCard` con la portada real, `h2` y `time`.
+> 3. La página pide los datos con `sanityFetch`, que **obliga a etiquetar** para la revalidación.
+> 4. Reemplazar lo hardcodeado de `src/lib/site.ts` por `CONFIGURACION_QUERY`.
 >
-> **Criterio de terminado:** `pnpm typegen` genera tipos, el build pasa en strict y hay ~10 obras
-> con imágenes en `development`.
+> ⚠️ **La grilla recorta a cuadrado** (§4.5): sin el `hotspot` de Sanity, una foto de arquitectura
+> pierde el edificio. El componente tiene que respetarlo.
 >
-> **Cuando termine:** marcar `1.3` ✅ en §1.9 y mover este bloque a `1.4`.
+> **Criterio de terminado:** `/trabajos` muestra los 10 trabajos reales en el orden curado, con
+> sus portadas, y `pnpm build` pasa.
+>
+> **Cuando termine:** marcar `1.4` ✅ en §1.9 y mover este bloque a `1.5`.
 
 ## Lo que ya está resuelto
 
@@ -195,8 +196,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | | 0.4 Primer deploy | ✅ 19/11/2026 |
 | **Fase 1** | 1.1 Proyecto de Sanity + Studio | ✅ 19/11/2026 |
 | | 1.2 Schemas | ✅ 19/11/2026 |
-| | 1.3 Queries + typegen | 🔴 **NEXT** |
-| | 1.4 Listado | ⬜ |
+| | 1.3 Queries + typegen | ✅ 19/11/2026 |
+| | 1.4 Listado | 🔴 **NEXT** |
 | | 1.5 Ficha | ⬜ |
 | | 1.6 Home | ⬜ |
 | **Fase 2** | 2.1 i18n en Sanity | ⬜ |
@@ -954,7 +955,7 @@ espeja datos del servidor es un bug esperando a pasar.
 > ficha técnica estructurada (superficie, programa, comitente, distinción...) copiada del sitio de
 > referencia. **El diseño real no la tiene.** Se eliminó.
 
-## 8.1 Documento `proyecto`
+## 8.1 Documento `trabajo`
 
 | Campo | Tipo | Dónde se ve | Notas |
 |---|---|---|---|
@@ -1324,6 +1325,7 @@ Ordenadas por cuándo bloquean:
 | **2026-11-19** | **La grilla se lee como 25 / 25 / 50 fluido**, no como los píxeles duros del Figma. Las celdas siguen al ancho del navegador. |
 | **2026-11-19** | **La Home ocupa 100dvh y no scrollea.** |
 | **2026-11-19** | **La columna izquierda de Listado y Ficha queda fija** mientras el resto scrollea. |
+| **2026-11-19** | **El tipo de contenido se llama `trabajo`, no `proyecto`**, para coincidir con la navegación, el breadcrumb y la ruta. |
 | **2026-11-19** | **Propuesta de mobile nuestra (§5.5)**, a refinar cuando el usuario la diseñe. Incluye bajar el tracking del cuerpo a `0.08em` y un botón `MENÚ` en las páginas internas. |
 | **2026-11-19** | **Se construye el portfolio de Gala, no un genérico previo** (§16.4). El código ya es neutro por diseño: contenido en Sanity y marca en tokens. El template se extrae con el cliente 2. |
 

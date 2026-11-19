@@ -4,7 +4,7 @@ import { orderableDocumentListDeskItem } from "@sanity/orderable-document-list";
 /**
  * Estructura del Studio (spec §12.2).
  *
- * - Las obras se listan con drag-and-drop: ese orden es el que manda en el
+ * - Los trabajos se listan con drag-and-drop: ese orden es el que manda en el
  *   sitio, y es curado a mano, no por fecha.
  * - "Datos del estudio" es un singleton fijado: se entra directo al documento,
  *   sin lista intermedia ni boton de crear.
@@ -14,8 +14,8 @@ export const structure: StructureResolver = (S, context) =>
     .title("Contenido")
     .items([
       orderableDocumentListDeskItem({
-        type: "proyecto",
-        title: "Obras",
+        type: "trabajo",
+        title: "Trabajos",
         S,
         context,
       }),

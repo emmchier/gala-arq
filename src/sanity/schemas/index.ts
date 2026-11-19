@@ -1,6 +1,6 @@
 import type { SchemaTypeDefinition } from "sanity";
 
-import { proyecto } from "./documents/proyecto";
+import { trabajo } from "./documents/trabajo";
 import { configuracion } from "./documents/configuracion";
 import { credito } from "./objects/credito";
 
@@ -9,7 +9,7 @@ import { credito } from "./objects/credito";
  * `noticia` llega en la fase 4, cuando exista el diseno de esa pantalla.
  */
 export const schemaTypes: SchemaTypeDefinition[] = [
-  proyecto,
+  trabajo,
   configuracion,
   credito,
 ];

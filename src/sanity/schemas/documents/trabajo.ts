@@ -5,7 +5,7 @@ import {
 } from "@sanity/orderable-document-list";
 
 /**
- * Una obra (spec §8.1).
+ * Un trabajo (spec §8.1).
  *
  * Lo que NO lleva, y es deliberado:
  * - `categoria`: el diseno no tiene categorias ni filtros (spec §5.3).
@@ -13,9 +13,9 @@ import {
  * - `publicado`: lo resuelve el draft/publish nativo de Sanity.
  * - `orden`: lo resuelve `orderRank` con drag-and-drop.
  */
-export const proyecto = defineType({
-  name: "proyecto",
-  title: "Obra",
+export const trabajo = defineType({
+  name: "trabajo",
+  title: "Trabajo",
   type: "document",
   orderings: [orderRankOrdering],
   groups: [
@@ -112,7 +112,7 @@ export const proyecto = defineType({
 
     defineField({
       name: "destacado",
-      title: "Destacada en la Home",
+      title: "Destacado en la Home",
       type: "boolean",
       group: "ficha",
       initialValue: false,
@@ -133,7 +133,7 @@ export const proyecto = defineType({
       group: "seo",
     }),
 
-    orderRankField({ type: "proyecto" }),
+    orderRankField({ type: "trabajo" }),
   ],
   preview: {
     select: {
