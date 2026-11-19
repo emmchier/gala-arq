@@ -25,29 +25,25 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `1.2` — Schemas de Sanity
+> ### Paso `1.3` — Queries GROQ, typegen y contenido dummy
 >
-> **Estado:** no empezado. El `1.1` quedó ✅ el 19/11/2026: el Studio abre en `/studio`, local y
-> en producción, contra el dataset `development`.
+> **Estado:** no empezado. El `1.2` quedó ✅ el 19/11/2026.
 >
-> **Qué hay que hacer:** definir los schemas de §8 en `src/sanity/schemas/`:
-> - **`proyecto`** (§8.1), con el objeto `credito` y las validaciones: `titulo`, `slug`, `anio`,
->   `portada` y el `alt` de cada imagen de la galería.
-> - **`configuracion`** (§8.2) como **singleton**, fijado en la estructura.
-> - Ordenamiento por drag-and-drop: `pnpm add @sanity/orderable-document-list`.
+> **Qué hay que hacer:**
+> 1. Queries en `src/sanity/queries/`, **centralizadas y nunca inline** (§8.5). Cada una pide
+>    solo los campos que usa: el listado **no** trae `galeria` ni `descripcion`.
+> 2. Etiquetarlas con `next: { tags: [...] }` para poder invalidar por tipo en el paso 3.1.
+> 3. `sanity typegen` → tipos generados del schema y las queries. **Nada de tipar a mano.**
+> 4. **Contenido dummy** en `development` (§18.5): ~10 obras. Vive en Sanity, no en fixtures.
+>    Ya hay una obra de prueba cargada (`proyecto-casa-elen`), sin imágenes.
 >
-> Después armar `src/sanity/structure.ts`: lista de obras ordenable, `configuracion` fijada y
-> fuera de "crear nuevo", y preview con portada + título + año (§12.2).
+> ⚠️ **Para las imágenes dummy:** repetir `assets/test-image.png` es mejor que variarlas, porque
+> aísla el layout del contenido (§18.5).
 >
-> ⚠️ **Sin campo `color` y sin campo `categoria`** (§8.1). Y sin `publicado` ni `orden`: los
-> reemplazan el draft/publish nativo y `orderRank`.
+> **Criterio de terminado:** `pnpm typegen` genera tipos, el build pasa en strict y hay ~10 obras
+> con imágenes en `development`.
 >
-> **No depende de nada externo.**
->
-> **Criterio de terminado:** se puede cargar una obra completa desde el Studio y `pnpm build`
-> pasa.
->
-> **Cuando termine:** marcar `1.2` ✅ en §1.9 y mover este bloque a `1.3`.
+> **Cuando termine:** marcar `1.3` ✅ en §1.9 y mover este bloque a `1.4`.
 
 ## Lo que ya está resuelto
 
@@ -198,8 +194,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | | 0.3 Layout base | ✅ 19/11/2026 |
 | | 0.4 Primer deploy | ✅ 19/11/2026 |
 | **Fase 1** | 1.1 Proyecto de Sanity + Studio | ✅ 19/11/2026 |
-| | 1.2 Schemas | 🔴 **NEXT** |
-| | 1.3 Queries + typegen | ⬜ |
+| | 1.2 Schemas | ✅ 19/11/2026 |
+| | 1.3 Queries + typegen | 🔴 **NEXT** |
 | | 1.4 Listado | ⬜ |
 | | 1.5 Ficha | ⬜ |
 | | 1.6 Home | ⬜ |
@@ -1162,6 +1158,20 @@ El dashboard es el **Studio de Sanity**, embebido en `/studio`.
   usuarios, ni gate que mantener.**
 - Activar **2FA** en la cuenta de Gala.
 - El plan free incluye **20 asientos**: sobra.
+
+## 12.1.b Cómo se verifica el Studio sin entrar al Studio
+
+El Studio pide login con la cuenta de Sanity, así que **no se puede verificar desde una sesión
+automatizada**. Las tres vías que sí sirven, y que se usaron en el paso 1.2:
+
+| Qué prueba | Comando |
+|---|---|
+| Que el schema es válido | `pnpm sanity schema validate --workspace default` |
+| Que acepta datos reales | `pnpm sanity documents create <archivo>.ndjson --dataset development` |
+| Que sale por la API con la forma esperada | `GET https://<projectId>.apicdn.sanity.io/v<fecha>/data/query/<dataset>?query=...` |
+
+Las tres juntas cubren de punta a punta sin abrir el navegador. **Lo único que queda para
+revisión humana es que la UI se vea bien.**
 
 ## 12.2 Qué trae resuelto sin escribir código
 

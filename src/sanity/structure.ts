@@ -1,9 +1,32 @@
 import type { StructureResolver } from "sanity/structure";
+import { orderableDocumentListDeskItem } from "@sanity/orderable-document-list";
 
 /**
- * Estructura del Studio. Por ahora vacia: los schemas llegan en el paso 1.2,
- * y ahi se arma el listado ordenable de obras y el singleton de configuracion
- * (spec §12.2).
+ * Estructura del Studio (spec §12.2).
+ *
+ * - Las obras se listan con drag-and-drop: ese orden es el que manda en el
+ *   sitio, y es curado a mano, no por fecha.
+ * - "Datos del estudio" es un singleton fijado: se entra directo al documento,
+ *   sin lista intermedia ni boton de crear.
  */
-export const structure: StructureResolver = (S) =>
-  S.list().title("Contenido").items(S.documentTypeListItems());
+export const structure: StructureResolver = (S, context) =>
+  S.list()
+    .title("Contenido")
+    .items([
+      orderableDocumentListDeskItem({
+        type: "proyecto",
+        title: "Obras",
+        S,
+        context,
+      }),
+      S.divider(),
+      S.listItem()
+        .title("Datos del estudio")
+        .id("configuracion")
+        .child(
+          S.document()
+            .schemaType("configuracion")
+            .documentId("configuracion")
+            .title("Datos del estudio"),
+        ),
+    ]);
