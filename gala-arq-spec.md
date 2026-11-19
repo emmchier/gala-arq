@@ -1294,6 +1294,21 @@ proyecto (paso 1.1).**
 - ⚠️ **El bilingüe con document-level duplica la cantidad de documentos.** Con 10.000 de límite y
   un portfolio de 50 obras, sigue sobrando muchísimo.
 
+### Lo que NO está en el Free, y qué significa para nosotros
+
+| Función de Growth | ¿La usamos? |
+|---|---|
+| Roles `editor`, `developer`, `contributor` | **No podemos.** Gala va como `administrator` (§12.1) |
+| Datasets privados | **No.** Los nuestros son públicos a propósito |
+| **Scheduled publishing** (programar una publicación para una fecha) | **No está en el alcance.** ⚠️ Pero es lo más plausible que Gala pida algún día, por la sección de Noticias: "que esto se publique el 12 de marzo". Si lo pide, es upgrade a Growth |
+| Comentarios y tareas dentro del Studio | **No.** Hay una sola editora |
+| Historial extendido de borradores | **No** para el flujo actual |
+| Más de 2 datasets | **No.** Un tercero cuesta US$999 |
+
+⚠️ **Lo único que hay que tener presente al diseñar features nuevas:** si alguna vez aparece la
+necesidad de **programar publicaciones por fecha**, eso **no se puede resolver gratis**. No
+prometérselo a Gala sin avisar el costo.
+
 ## 17.2 Cloudflare Workers — plan Free
 
 | | Free | Paid |
