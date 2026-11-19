@@ -113,6 +113,11 @@
 
   --cell: 204px;
   --cell-gap: 8px;
+
+  /* Ancho del carrusel de la Home, alineado a la derecha.
+     En el Figma mide 820/1238 = 66.3%. El usuario lo subio a 70% el
+     19/11/2026 para que sea consistente con el resto de la grilla. */
+  --col-featured: 70%;
 }
 @media (width >= 64rem) {
   :root {

@@ -25,25 +25,27 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `0.3` — Layout base
+> ### Paso `0.4` — Primer deploy a Cloudflare Workers
 >
-> **Estado:** no empezado. Los pasos `0.1` y `0.2` quedaron ✅ el 19/11/2026.
+> **Estado:** no empezado. Los pasos `0.1`, `0.2` y `0.3` quedaron ✅ el 19/11/2026.
 >
-> **Qué hay que hacer:** construir el cascarón de §5.1 con contenido hardcodeado:
-> `SiteHeader`, `SiteFooter`, `PageContainer`, `Sidebar` (variantes nav y breadcrumb) y la
-> **grilla de 3 columnas** de §4.5. Desktop y mobile (§5.5).
+> **Qué hay que hacer:** publicar el cascarón en `*.workers.dev`. Es el paso que **descarta el
+> riesgo más grande del stack** (§13.2), con el sitio todavía vacío.
 >
-> Los tokens ya están: usar `text-display`, `text-body`, `text-label`, `text-ui`, `text-social`,
-> `text-meta`, `text-fine`, `text-brand`, `text-ink`, `text-quiet`, `bg-paper` y las variables de
-> layout `--col-sidebar`, `--col-text`, `--col-media`, `--col-gap`, `--cell`, `--cell-gap`.
-> **No hardcodear ningún valor que ya sea token.**
+> 1. `pnpm wrangler login` (lo hace el usuario, abre el navegador).
+> 2. Crear el bucket del cache de ISR:
+>    `pnpm wrangler r2 bucket create gala-arq-dev-opennext-cache`.
+> 3. `pnpm run deploy`.
+> 4. Verificar que la URL de `workers.dev` muestre la Home y `/trabajos`.
 >
-> **Referencia viva:** `/tokens` muestra toda la escala renderizada.
+> **Lo que el usuario tiene que hacer:** el `wrangler login`. Nada más.
 >
-> **Criterio de terminado:** el header y el footer coinciden con el Figma a 1366px, y `pnpm build`
-> pasa.
+> ⚠️ **El error clásico:** si falta el binding `WORKER_SELF_REFERENCE`, responde **500**. Ya está
+> en `wrangler.jsonc`, pero el `service` tiene que coincidir con el `name` del Worker.
 >
-> **Cuando termine:** marcar `0.3` ✅ en §1.9 y mover este bloque a `0.4`.
+> **Criterio de terminado:** la URL de `workers.dev` muestra el layout, en desktop y mobile.
+>
+> **Cuando termine:** marcar `0.4` ✅ en §1.9 y mover este bloque a `1.1`.
 
 ## Lo que ya está resuelto
 
@@ -191,8 +193,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 |---|---|---|
 | **Fase 0** | 0.1 Scaffold | ✅ 19/11/2026 |
 | | 0.2 Tokens del Figma | ✅ 19/11/2026 |
-| | 0.3 Layout base | 🔴 **NEXT** |
-| | 0.4 Primer deploy | ⬜ |
+| | 0.3 Layout base | ✅ 19/11/2026 |
+| | 0.4 Primer deploy | 🔴 **NEXT** |
 | **Fase 1** | 1.1 Proyecto de Sanity + Studio | ⬜ |
 | | 1.2 Schemas | ⬜ |
 | | 1.3 Queries + typegen | ⬜ |
@@ -405,9 +407,19 @@ Todo el sitio vive en una grilla de columnas fijas. Medidas tomadas a **1366px**
 > `629 = 3 × 204 + 2 × 8`. La grilla de medios es la misma en Listado y en Ficha: **3 columnas,
 > celda cuadrada, gap de 8**. Un solo componente sirve para las dos pantallas.
 
-**Cómo implementarla:** CSS Grid con áreas nombradas en el `main`, no flex con anchos fijos. Los
-valores de arriba son los de 1366px; a partir de ahí el responsive es decisión nuestra, porque
-**el Figma solo tiene desktop** (§16).
+**Cómo implementarla:** ✅ implementado en el paso 0.3, en `src/components/layout/page-frame.tsx`.
+
+> ⚠️ **La trampa que apareció al construirlo:** en el Figma los **1238 son el contenido**, dentro
+> de los márgenes de 64. Si el contenedor lleva `max-width: 1238px` **más** el padding, el
+> contenido real queda en 1110 y **todos los porcentajes salen corridos**. El `max-width` tiene
+> que sumar los dos gutters.
+
+> 📌 **El carrusel de la Home va al 70%** del contenido, alineado a la derecha. En el Figma mide
+> 820/1238 = 66.3%; el usuario lo subió a 70% el 19/11/2026 para que sea consistente con el resto
+> de la grilla. **Es una decisión deliberada, no un error contra el Figma.**
+
+Los valores de arriba son los de 1366px; a partir de ahí el responsive es propuesta nuestra (§5.5),
+porque **el Figma solo tiene desktop**.
 
 ## 4.6 Movimiento y transiciones
 
@@ -1252,6 +1264,7 @@ Ordenadas por cuándo bloquean:
 | **2026-11-19** | **El dominio se compra cuando se sepa el nombre**, no antes: comprarlo temprano no da ventaja de SEO. |
 | **2026-11-19** | **El proyecto de Sanity se crea dentro de una organización**, para que el traspaso a Gala sea una transferencia soportada y no una migración a mano. |
 | **2026-11-19** | **El contenido dummy vive en Sanity**, no en fixtures locales: prueba el pipeline real y no se tira después. |
+| **2026-11-19** | **El carrusel de la Home pasa de 66.3% a 70%** del contenido, por pedido del usuario, para que sea consistente con la grilla. |
 | **2026-11-19** | **Propuesta de mobile nuestra (§5.5)**, a refinar cuando el usuario la diseñe. Incluye bajar el tracking del cuerpo a `0.08em` y un botón `MENÚ` en las páginas internas. |
 | **2026-11-19** | **Se construye el portfolio de Gala, no un genérico previo** (§16.4). El código ya es neutro por diseño: contenido en Sanity y marca en tokens. El template se extrae con el cliente 2. |
 
