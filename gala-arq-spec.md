@@ -291,10 +291,14 @@ Dos familias, y cada una tiene un solo trabajo:
 | Familia | Pesos | Dónde |
 |---|---|---|
 | **Josefin Sans** | Light (300), Medium (500) | **solo el logo** `gala arq` |
-| **Manrope** | ExtraLight (200), Light (300) | **todo el resto del sitio** |
+| **Manrope** | Light (300), **Regular (400)** | **todo el resto del sitio** |
+
+> ⚠️ **El peso base es 400, no el Light 300 del Figma.** A tamaño real el 300 se veía demasiado
+> frágil (decisión del usuario, 19/11/2026). El **300 queda para el idioma inactivo** del
+> switcher, que así mantiene su diferencia de un paso contra el activo. El logo no cambia.
 
 - El logo es `gala` en Light + `arq` en Medium, 16px, mismo color.
-- **Todo el resto del sitio es Manrope Light (300).** ExtraLight (200) aparece **una sola vez**:
+- **Todo el resto del sitio es Manrope Regular (400).** El Light (300) aparece **una sola vez**:
   el idioma inactivo del switcher.
 - Cargar ambas por **`next/font/google`**, self-hosted. Solo los pesos listados, y solo los
   subsets `latin` y `latin-ext` (hace falta `latin-ext` por los acentos del español).
@@ -316,7 +320,7 @@ pierde el tracking, se pierde el diseño.
 | `breadcrumb` | 14px | 20px | 2.24px = **0.16em** | `#1e1e1e` | **uppercase** |
 | `pagination-label` (PREV/NEXT) | 14px | 20px | 2.24px = **0.16em** | `#1e1e1e` | **uppercase** |
 | `language` activo | 14px | 20px | — | `#1e1e1e` | — |
-| `language` inactivo | 14px | 20px | — | `#6f7579` | — (peso **200**) |
+| `language` inactivo | 14px | 20px | — | `#6f7579` | — (peso **300**) |
 | `social-link` | 14px | 16px | — | `#6f7579` | — |
 | `project-year` (card) | 10px | 14px | 1.6px = **0.16em** | `#6f7579` | — |
 | `footer` | 10px | 14px | — | `#6f7579` | — |
@@ -526,7 +530,7 @@ oscuro**.
 ### `header.site-header` (80px)
 - Izquierda: `a.brand` → el logo `gala arq`, linkea a `/`.
 - Derecha: `nav.language-switcher` → `EN · ES`. El idioma **activo** va en `ink` peso 300; el
-  **inactivo** en `muted` peso 200. El separador es un `·`.
+  **inactivo** en `muted` peso 300. El separador es un `·`.
 
 ### `div.sidebar`
 Cambia según la pantalla:
@@ -1326,6 +1330,8 @@ Ordenadas por cuándo bloquean:
 | **2026-11-19** | **La Home ocupa 100dvh y no scrollea.** |
 | **2026-11-19** | **La columna izquierda de Listado y Ficha queda fija** mientras el resto scrollea. |
 | **2026-11-19** | **El tipo de contenido se llama `trabajo`, no `proyecto`**, para coincidir con la navegación, el breadcrumb y la ruta. |
+| **2026-11-19** | **El peso base de la tipografía pasa de Light 300 a Regular 400**: el 300 del Figma se veía demasiado frágil. |
+| **2026-11-19** | **Las imágenes van por un loader propio**, no por el optimizador de Next: los bytes salen del CDN de Sanity y no gastan CPU del Worker. |
 | **2026-11-19** | **Propuesta de mobile nuestra (§5.5)**, a refinar cuando el usuario la diseñe. Incluye bajar el tracking del cuerpo a `0.08em` y un botón `MENÚ` en las páginas internas. |
 | **2026-11-19** | **Se construye el portfolio de Gala, no un genérico previo** (§16.4). El código ya es neutro por diseño: contenido en Sanity y marca en tokens. El template se extrae con el cliente 2. |
 
