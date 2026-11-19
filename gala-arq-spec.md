@@ -1182,6 +1182,57 @@ Ordenadas por cuándo bloquean:
 | **2026-11-19** | **El proyecto de Sanity se crea dentro de una organización**, para que el traspaso a Gala sea una transferencia soportada y no una migración a mano. |
 | **2026-11-19** | **El contenido dummy vive en Sanity**, no en fixtures locales: prueba el pipeline real y no se tira después. |
 | **2026-11-19** | **Propuesta de mobile nuestra (§5.5)**, a refinar cuando el usuario la diseñe. Incluye bajar el tracking del cuerpo a `0.08em` y un botón `MENÚ` en las páginas internas. |
+| **2026-11-19** | **Se construye el portfolio de Gala, no un genérico previo** (§16.4). El código ya es neutro por diseño: contenido en Sanity y marca en tokens. El template se extrae con el cliente 2. |
+
+---
+
+# §16.4 Reutilización: este proyecto como base de otros portfolios
+
+El usuario quiere que esto sirva de base para otros portfolios de arquitectura.
+
+> **Decisión: se construye el de Gala, no un genérico del que después se saque el de Gala.**
+> La reutilización se consigue por **disciplina**, no por un repo aparte.
+
+## Por qué en ese orden
+
+**El código ya es genérico por diseño.** No hace falta construirlo aparte:
+
+- Todo el contenido vive en **Sanity** (§8). No hay un solo texto de Gala en el código.
+- Toda la identidad visual vive en **un archivo de tokens** (§4). Cambiar de marca es cambiar ese
+  archivo.
+- Sanity y Cloudflare son **por cliente de todos modos**: cada uno necesita su proyecto, su
+  dataset, su Worker y su dominio. No hay nada que compartir ahí.
+
+Entonces "el genérico" no es software distinto: **es este mismo repo con otros tokens y otro
+`projectId`.** Un segundo repo no agrega capacidad, agrega un repo que mantener sincronizado.
+
+**Y un genérico sacado de un solo caso no es genérico.** Es el diseño de Gala con el nombre
+borrado. Las costuras reales de un template aparecen con el **segundo** cliente, que es el que
+enseña qué era específico y qué era común. Abstraer antes es adivinar.
+
+## La disciplina que lo mantiene extraíble (cuesta cero)
+
+Vale la pena igual, se extraiga o no:
+
+1. **Ningún dato de Gala en el código.** Nombre, mail, redes, textos legales: todo sale de
+   `configuracion` (§8.2). Si aparece un string de Gala en un componente, está mal.
+2. **Los tokens en un solo lugar** (§4.2–§4.4), en `@theme`. Nunca repetidos en componentes.
+3. **Nombres de schema y de componentes genéricos:** `proyecto`, `ProjectCard`. Nunca
+   `galaProyecto` ni `GalaHeader`.
+4. **Lo específico de la instancia, en variables de entorno:** `projectId`, `dataset`,
+   `account_id`, dominio. Nunca hardcodeado.
+5. **Los textos de interfaz en archivos de mensajes** (§9.4), no sueltos en el markup. Eso ya hace
+   falta para el bilingüe, así que sale gratis.
+
+## Cuándo se extrae el template
+
+**Cuando aparezca el cliente 2, no antes.** En ese momento el repo de Gala ya es el template: se
+marca como *template repository* en GitHub o se saca un repo nuevo a partir de él, y lo que haya
+que generalizar se generaliza **con dos casos reales a la vista**.
+
+> ⚠️ **Lo que NO es esto:** un producto multi-tenant, con un deploy sirviendo muchos portfolios.
+> Eso es otra arquitectura y mucho más trabajo. Para trabajo de estudio, cliente por cliente, el
+> camino es **un deploy y un proyecto de Sanity por cliente**, a partir de un starter común.
 
 ---
 
