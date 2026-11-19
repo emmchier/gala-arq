@@ -221,7 +221,7 @@ Referencias: 🔴 next · 🟡 en curso · ✅ hecho · ⬜ pendiente
 | `fileKey` de Figma | `emDsp7Xtbz8TVk8TU7suuC` |
 | Página de Figma a usar | **`High Fidelity`** (`33:4819`) — ver §4.1 |
 | Proyecto de Sanity | ✅ **Gala Arq** · `projectId` = **`3ibcmrqh`** |
-| Organización de Sanity | ⬜ pendiente: se crea y se le adjunta el proyecto (§16.5) |
+| Organización de Sanity | `Gala Arq` — pendiente de crear y adjuntar (§16.5) |
 | Dataset de trabajo | `development` (se crea en el paso 1.1). `production` ya existe y queda vacío hasta la fase 3 |
 | Cuenta de Cloudflare | ✅ creada. ⚠️ El `account_id` **no se commitea** (repo público): va en `CLOUDFLARE_ACCOUNT_ID` |
 | Hosting | Cloudflare Workers — Worker no creado todavía |
@@ -1240,6 +1240,35 @@ que generalizar se generaliza **con dos casos reales a la vista**.
 
 **Objetivo:** que al final Gala sea la dueña de todo y el usuario pueda desligarse sin dejarla
 colgada. Durante la construcción, el usuario trabaja solo, sin depender de logins de Gala.
+
+## La organización de Sanity
+
+**Decisión: una organización por cliente, con el nombre del cliente.** Para Gala: **`Gala Arq`**.
+
+**Por qué no una sola organización del estudio con todos los clientes:** el requisito es que Gala
+termine siendo la dueña y el usuario pueda desligarse (§16.4 no lo cambia). Con una organización
+por cliente, el traspaso es **hacerla administradora de su organización y salirse**: el proyecto
+no se mueve de lugar, no hay transferencia entre organizaciones, no hay letra chica. Con una
+organización común habría que sacar el proyecto de ahí, que es justamente el trámite con
+gotchas.
+
+Las organizaciones de Sanity son gratis, así que una por cliente no cuesta nada.
+
+### Pasos, una sola vez
+
+1. En `sanity.io/manage`, **dropdown de arriba a la izquierda** (el que dice el nombre de la
+   cuenta) → **Create new organization**. Atajo directo: `sanity.io/manage/create-new-team`.
+2. Nombre: **`Gala Arq`**.
+3. Entrar al proyecto **Gala Arq** → pestaña **Settings** → bajar hasta **Danger zone** →
+   **Transfer ownership** → elegir la organización → confirmar.
+4. Verificar: el proyecto tiene que aparecer **bajo la organización**, no en los proyectos
+   personales.
+
+> No hay invitaciones que aceptar: la misma persona es administradora del proyecto y de la
+> organización, así que la transferencia es inmediata.
+
+> ⚠️ **Todavía NO agregar a Gala.** Eso es la fase 6. Sumarla ahora no le sirve de nada y, cuando
+> venza el trial, su rol se degradaría a `viewer` igual (§17.0).
 
 ## Cómo se arma ahora para que el traspaso sea limpio después
 
