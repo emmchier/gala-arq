@@ -293,7 +293,7 @@ export type AllSanitySchemaTypes =
 
 // Source: src/sanity/queries/configuracion.ts
 // Variable: CONFIGURACION_QUERY
-// Query: *[_type == "configuracion"][0]  {    nombreEstudio,    textoEstudio,    retrato,    email,    telefono,    direccion,    instagram,    behance,    cv,    textoLegal  }
+// Query: *[_type == "configuracion"][0]  {    nombreEstudio,    textoEstudio,    retrato {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    email,    telefono,    direccion,    instagram,    behance,    cv,    textoLegal  }
 export type CONFIGURACION_QUERY_RESULT = {
   nombreEstudio: string | null;
   textoEstudio: Array<{
@@ -315,7 +315,18 @@ export type CONFIGURACION_QUERY_RESULT = {
     _key: string;
   }> | null;
   retrato: {
-    asset?: SanityImageAssetReference;
+    asset: {
+      _id: string;
+      url: string | null;
+      metadata: {
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+          aspectRatio: number | null;
+        } | null;
+      } | null;
+    } | null;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -354,14 +365,25 @@ export type CONFIGURACION_QUERY_RESULT = {
 
 // Source: src/sanity/queries/trabajo.ts
 // Variable: TRABAJOS_LISTADO_QUERY
-// Query: *[_type == "trabajo" && defined(slug.current)]  | order(orderRank)  {    _id,    titulo,    "slug": slug.current,    anio,    portada  }
+// Query: *[_type == "trabajo" && defined(slug.current)]  | order(orderRank)  {    _id,    titulo,    "slug": slug.current,    anio,    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }}  }
 export type TRABAJOS_LISTADO_QUERY_RESULT = Array<{
   _id: string;
   titulo: string | null;
   slug: string | null;
   anio: number | null;
   portada: {
-    asset?: SanityImageAssetReference;
+    asset: {
+      _id: string;
+      url: string | null;
+      metadata: {
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+          aspectRatio: number | null;
+        } | null;
+      } | null;
+    } | null;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -372,13 +394,24 @@ export type TRABAJOS_LISTADO_QUERY_RESULT = Array<{
 
 // Source: src/sanity/queries/trabajo.ts
 // Variable: TRABAJOS_DESTACADOS_QUERY
-// Query: *[_type == "trabajo" && destacado == true && defined(slug.current)]  | order(orderRank)  {    _id,    titulo,    "slug": slug.current,    portada  }
+// Query: *[_type == "trabajo" && destacado == true && defined(slug.current)]  | order(orderRank)  {    _id,    titulo,    "slug": slug.current,    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }}  }
 export type TRABAJOS_DESTACADOS_QUERY_RESULT = Array<{
   _id: string;
   titulo: string | null;
   slug: string | null;
   portada: {
-    asset?: SanityImageAssetReference;
+    asset: {
+      _id: string;
+      url: string | null;
+      metadata: {
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+          aspectRatio: number | null;
+        } | null;
+      } | null;
+    } | null;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -389,7 +422,7 @@ export type TRABAJOS_DESTACADOS_QUERY_RESULT = Array<{
 
 // Source: src/sanity/queries/trabajo.ts
 // Variable: TRABAJO_QUERY
-// Query: *[_type == "trabajo" && slug.current == $slug][0]  {    _id,    titulo,    "slug": slug.current,    ubicacion,    anio,    descripcion,    creditos[]{ _key, rol, valor },    portada,    galeria[]{ _key, ..., },    seoTitle,    seoDescription,    orderRank  }
+// Query: *[_type == "trabajo" && slug.current == $slug][0]  {    _id,    titulo,    "slug": slug.current,    ubicacion,    anio,    descripcion,    creditos[]{ _key, rol, valor },    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    galeria[] {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    seoTitle,    seoDescription,    orderRank  }
 export type TRABAJO_QUERY_RESULT = {
   _id: string;
   titulo: string | null;
@@ -420,7 +453,18 @@ export type TRABAJO_QUERY_RESULT = {
     valor: string | null;
   }> | null;
   portada: {
-    asset?: SanityImageAssetReference;
+    asset: {
+      _id: string;
+      url: string | null;
+      metadata: {
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+          aspectRatio: number | null;
+        } | null;
+      } | null;
+    } | null;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -428,13 +472,24 @@ export type TRABAJO_QUERY_RESULT = {
     _type: "image";
   } | null;
   galeria: Array<{
-    _key: string;
-    asset?: SanityImageAssetReference;
+    asset: {
+      _id: string;
+      url: string | null;
+      metadata: {
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+          aspectRatio: number | null;
+        } | null;
+      } | null;
+    } | null;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
     _type: "image";
+    _key: string;
   }> | null;
   seoTitle: string | null;
   seoDescription: string | null;
@@ -463,10 +518,10 @@ export type TRABAJOS_SLUGS_QUERY_RESULT = Array<string | null>;
 // Query TypeMap
 declare global {
   interface SanityQueries {
-    '\n  *[_type == "configuracion"][0]\n  {\n    nombreEstudio,\n    textoEstudio,\n    retrato,\n    email,\n    telefono,\n    direccion,\n    instagram,\n    behance,\n    cv,\n    textoLegal\n  }\n': CONFIGURACION_QUERY_RESULT;
-    '\n  *[_type == "trabajo" && defined(slug.current)]\n  | order(orderRank)\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    anio,\n    portada\n  }\n': TRABAJOS_LISTADO_QUERY_RESULT;
-    '\n  *[_type == "trabajo" && destacado == true && defined(slug.current)]\n  | order(orderRank)\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    portada\n  }\n': TRABAJOS_DESTACADOS_QUERY_RESULT;
-    '\n  *[_type == "trabajo" && slug.current == $slug][0]\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    ubicacion,\n    anio,\n    descripcion,\n    creditos[]{ _key, rol, valor },\n    portada,\n    galeria[]{ _key, ..., },\n    seoTitle,\n    seoDescription,\n    orderRank\n  }\n': TRABAJO_QUERY_RESULT;
+    '\n  *[_type == "configuracion"][0]\n  {\n    nombreEstudio,\n    textoEstudio,\n    retrato {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    email,\n    telefono,\n    direccion,\n    instagram,\n    behance,\n    cv,\n    textoLegal\n  }\n': CONFIGURACION_QUERY_RESULT;
+    '\n  *[_type == "trabajo" && defined(slug.current)]\n  | order(orderRank)\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    anio,\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n}\n  }\n': TRABAJOS_LISTADO_QUERY_RESULT;
+    '\n  *[_type == "trabajo" && destacado == true && defined(slug.current)]\n  | order(orderRank)\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n}\n  }\n': TRABAJOS_DESTACADOS_QUERY_RESULT;
+    '\n  *[_type == "trabajo" && slug.current == $slug][0]\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    ubicacion,\n    anio,\n    descripcion,\n    creditos[]{ _key, rol, valor },\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    galeria[] {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    seoTitle,\n    seoDescription,\n    orderRank\n  }\n': TRABAJO_QUERY_RESULT;
     '\n  {\n    "anterior": *[_type == "trabajo" && defined(slug.current) && orderRank < $orderRank]\n      | order(orderRank desc)[0]{ titulo, "slug": slug.current },\n    "siguiente": *[_type == "trabajo" && defined(slug.current) && orderRank > $orderRank]\n      | order(orderRank asc)[0]{ titulo, "slug": slug.current }\n  }\n': TRABAJO_VECINOS_QUERY_RESULT;
     '\n  *[_type == "trabajo" && defined(slug.current)].slug.current\n': TRABAJOS_SLUGS_QUERY_RESULT;
   }

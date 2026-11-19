@@ -3,11 +3,13 @@ import { Manrope, Josefin_Sans } from "next/font/google";
 import "./globals.css";
 
 // spec §4.2 — Manrope para todo el sitio, Josefin Sans solo para el logo.
+// El peso base es 400 (regular): el 300 del Figma se veia demasiado fragil.
+// El 300 queda para el idioma inactivo del switcher.
 // latin-ext hace falta por los acentos del espanol.
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin", "latin-ext"],
-  weight: ["200", "300"],
+  weight: ["300", "400"],
   display: "swap",
 });
 

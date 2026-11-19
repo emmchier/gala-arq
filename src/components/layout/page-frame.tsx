@@ -15,11 +15,13 @@ import { SiteFooter } from "./site-footer";
  */
 export function PageFrame({
   variant,
+  config,
   sidebarTop,
   sidebarBottom,
   children,
 }: {
   variant: "home" | "inner";
+  config: { nombreEstudio: string | null; instagram?: string | null; behance?: string | null };
   sidebarTop?: ReactNode;
   sidebarBottom?: ReactNode;
   children: ReactNode;
@@ -39,7 +41,11 @@ export function PageFrame({
         Saltar al contenido
       </a>
 
-      <SiteHeader withMenu={!isHome} />
+      <SiteHeader
+        withMenu={!isHome}
+        instagram={config.instagram}
+        behance={config.behance}
+      />
 
       <main
         id="contenido"
@@ -72,7 +78,10 @@ export function PageFrame({
         </div>
       </main>
 
-      <SiteFooter split={isHome} />
+      <SiteFooter
+        split={isHome}
+        nombreEstudio={config.nombreEstudio ?? "Gala Arq"}
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { defineQuery } from "next-sanity";
+import { IMAGEN } from "./fragments";
 
 /** Singleton con los datos del sitio (spec §8.2). Se consume en el layout. */
 export const CONFIGURACION_QUERY = defineQuery(`
@@ -6,7 +7,7 @@ export const CONFIGURACION_QUERY = defineQuery(`
   {
     nombreEstudio,
     textoEstudio,
-    retrato,
+    retrato ${IMAGEN},
     email,
     telefono,
     direccion,

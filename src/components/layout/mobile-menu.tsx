@@ -8,15 +8,25 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { NAV, SOCIAL } from "@/lib/site";
+import { NAV } from "@/lib/site";
 
 /**
  * Menu mobile de las paginas internas (spec §5.5).
  * Boton de texto "MENU" con el mismo estilo que el switcher de idioma.
  * Nada de icono de hamburguesa: el diseno no tiene iconografia.
  */
-export function MobileMenu() {
+export function MobileMenu({
+  instagram,
+  behance,
+}: {
+  instagram?: string | null;
+  behance?: string | null;
+}) {
   const [open, setOpen] = useState(false);
+  const redes = [
+    { label: "Instagram", href: instagram },
+    { label: "Behance", href: behance },
+  ].filter((i): i is { label: string; href: string } => Boolean(i.href));
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -41,8 +51,8 @@ export function MobileMenu() {
           ))}
         </ul>
         <ul className="mt-10 flex flex-col">
-          {SOCIAL.map((item) => (
-            <li key={item.href}>
+          {redes.map((item) => (
+            <li key={item.label}>
               <a
                 href={item.href}
                 target="_blank"

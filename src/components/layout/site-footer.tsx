@@ -1,26 +1,15 @@
-import { SITE } from "@/lib/site";
-
 /**
  * Footer (spec §5.1). 48px, 10px quiet.
  * En la Home va partido entre los dos extremos; en Listado y Ficha, todo
  * junto a la izquierda.
  */
-export function SiteFooter({ split = false }: { split?: boolean }) {
-  const legal = (
-    <a href="/legales" className="text-fine text-quiet">
-      Legales
-    </a>
-  );
-  const credit = (
-    <a
-      href="https://emmchier.com"
-      target="_blank"
-      rel="noreferrer noopener"
-      className="text-fine text-quiet"
-    >
-      Powered by emmchier
-    </a>
-  );
+export function SiteFooter({
+  nombreEstudio,
+  split = false,
+}: {
+  nombreEstudio: string;
+  split?: boolean;
+}) {
   const dot = (
     <span aria-hidden className="text-fine text-quiet">
       &middot;
@@ -34,13 +23,22 @@ export function SiteFooter({ split = false }: { split?: boolean }) {
       }`}
     >
       <small className="text-fine text-quiet">
-        {SITE.year} &copy; {SITE.name}
+        {new Date().getFullYear()} &copy; {nombreEstudio}
       </small>
       <div className="flex items-center gap-x-2">
         {split ? null : dot}
-        {legal}
+        <a href="/legales" className="text-fine text-quiet">
+          Legales
+        </a>
         {dot}
-        {credit}
+        <a
+          href="https://emmchier.com"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="text-fine text-quiet"
+        >
+          Powered by emmchier
+        </a>
       </div>
     </footer>
   );

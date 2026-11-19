@@ -25,26 +25,22 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `1.4` — Listado `/trabajos`
+> ### Paso `1.5` — Ficha `/trabajos/[slug]`
 >
-> **Estado:** no empezado. El `1.3` quedó ✅ el 19/11/2026.
+> **Estado:** no empezado. El `1.4` quedó ✅ el 19/11/2026.
 >
-> **Qué hay que hacer:** conectar el listado a datos reales. El cascarón ya está (paso 0.3), la
-> query ya está (`TRABAJOS_LISTADO_QUERY`) y hay **10 trabajos dummy** cargados en `development`.
+> 🚧 **Antes de empezar hay que cerrar una decisión:** el Figma tiene dos variantes de ficha y el
+> spec tiene elegida la **07** (cuadrícula compacta), pero el usuario mandó la **06** (imagen
+> grande, contador `1/48`, tira de miniaturas) al explicar la grilla. **Preguntar cuál va.**
+> Cambia el componente de galería entero, no el schema.
 >
-> 1. Componente `SanityImage` que envuelve `next/image` con `@sanity/image-url`, **siempre con
->    `sizes` explícito** (§18.2).
-> 2. `ProjectCard` con la portada real, `h2` y `time`.
-> 3. La página pide los datos con `sanityFetch`, que **obliga a etiquetar** para la revalidación.
-> 4. Reemplazar lo hardcodeado de `src/lib/site.ts` por `CONFIGURACION_QUERY`.
+> **Qué hay que hacer:** la ruta dinámica con `generateStaticParams` (ya está
+> `TRABAJOS_SLUGS_QUERY`), la columna de texto con título, ubicación, año, descripción en
+> Portable Text y créditos, la galería, y `PREV · NEXT` con `TRABAJO_VECINOS_QUERY`.
 >
-> ⚠️ **La grilla recorta a cuadrado** (§4.5): sin el `hotspot` de Sanity, una foto de arquitectura
-> pierde el edificio. El componente tiene que respetarlo.
+> **Criterio de terminado:** una obra real renderiza completa con su galería, y `pnpm build` pasa.
 >
-> **Criterio de terminado:** `/trabajos` muestra los 10 trabajos reales en el orden curado, con
-> sus portadas, y `pnpm build` pasa.
->
-> **Cuando termine:** marcar `1.4` ✅ en §1.9 y mover este bloque a `1.5`.
+> **Cuando termine:** marcar `1.5` ✅ en §1.9 y mover este bloque a `1.6`.
 
 ## Lo que ya está resuelto
 
@@ -197,8 +193,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | **Fase 1** | 1.1 Proyecto de Sanity + Studio | ✅ 19/11/2026 |
 | | 1.2 Schemas | ✅ 19/11/2026 |
 | | 1.3 Queries + typegen | ✅ 19/11/2026 |
-| | 1.4 Listado | 🔴 **NEXT** |
-| | 1.5 Ficha | ⬜ |
+| | 1.4 Listado | ✅ 19/11/2026 |
+| | 1.5 Ficha | 🔴 **NEXT** |
 | | 1.6 Home | ⬜ |
 | **Fase 2** | 2.1 i18n en Sanity | ⬜ |
 | | 2.2 i18n en Next | ⬜ |
@@ -1618,10 +1614,19 @@ Un componente `SanityImage` envuelve `next/image` con `@sanity/image-url` y **si
 `placeholder="blur"` con el LQIP. `priority` **solo** en la primera imagen del carrusel y en la
 primera de la galería.
 
-> ⚠️ **A verificar en el paso 0.4:** `next/image` con el optimizador de Next sobre Workers es un
-> punto débil. Como Sanity ya entrega la imagen optimizada y del tamaño pedido, lo más robusto es
-> **desactivar el optimizador de Next** (`images: { unoptimized: true }`) y dejar que Sanity haga
-> el trabajo. Decidirlo midiendo.
+> ✅ **Resuelto en el paso 1.4.** No se desactiva `next/image`: se le pone un **loader propio**
+> (`src/sanity/image-loader.ts`, declarado en `next.config.ts`). Así se conserva el srcset, el
+> lazy loading y el placeholder de Next, pero **los bytes salen del CDN de Sanity y no gastan CPU
+> del Worker**.
+>
+> ⚠️ **Va como archivo aparte, no como prop.** Un `loader` pasado por prop no puede cruzar de
+> Server Component a Client Component, y `next/image` es cliente. El error es
+> *"Functions cannot be passed directly to Client Components"*.
+>
+> ⚠️ **El `h` en la URL no es opcional.** Con solo `w`, Sanity devuelve la imagen en su proporción
+> original y el recorte lo termina haciendo `object-cover` en el browser, **centrado y sin mirar
+> el hotspot**. Verificado: `w=640` solo → 640×400; `w=640&h=640` → 640×640 recortado por punto
+> focal, y además **33 KB contra 578 KB**. El loader escala `w` y `h` juntos.
 
 ## 18.3 Parámetros
 

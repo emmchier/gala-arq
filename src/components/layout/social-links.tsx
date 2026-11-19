@@ -1,12 +1,25 @@
-import { SOCIAL } from "@/lib/site";
+/** Instagram y Behance, desde `configuracion`. Sin tracking, 14/16 (spec §4.3). */
+export function SocialLinks({
+  instagram,
+  behance,
+  className,
+}: {
+  instagram?: string | null;
+  behance?: string | null;
+  className?: string;
+}) {
+  const items = [
+    { label: "Instagram", href: instagram },
+    { label: "Behance", href: behance },
+  ].filter((i): i is { label: string; href: string } => Boolean(i.href));
 
-/** Instagram y Behance. Sin tracking, 14/16 (spec §4.3). */
-export function SocialLinks({ className }: { className?: string }) {
+  if (items.length === 0) return null;
+
   return (
     <nav aria-label="Redes" className={className}>
       <ul className="flex flex-col">
-        {SOCIAL.map((item) => (
-          <li key={item.href}>
+        {items.map((item) => (
+          <li key={item.label}>
             <a
               href={item.href}
               target="_blank"

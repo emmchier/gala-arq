@@ -2,7 +2,7 @@ import Link from "next/link";
 
 /**
  * Switcher EN · ES (spec §5.1).
- * El idioma activo va en ink peso 300; el inactivo en quiet peso 200.
+ * El idioma activo va en ink peso 400; el inactivo en quiet peso 300.
  * Hardcodeado en el paso 0.3: se conecta al routing real en el paso 2.3.
  */
 export function LanguageSwitcher({ active = "es" }: { active?: "es" | "en" }) {
@@ -15,8 +15,8 @@ export function LanguageSwitcher({ active = "es" }: { active?: "es" | "en" }) {
         aria-current={isActive ? "true" : undefined}
         className={
           isActive
-            ? "text-ui text-ink font-light"
-            : "text-ui text-quiet font-extralight"
+            ? "text-ui text-ink font-normal"
+            : "text-ui text-quiet font-light"
         }
       >
         {code.toUpperCase()}

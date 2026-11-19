@@ -1,4 +1,5 @@
 import { defineQuery } from "next-sanity";
+import { IMAGEN } from "./fragments";
 
 /**
  * Queries de trabajos (spec §8.5).
@@ -19,11 +20,11 @@ export const TRABAJOS_LISTADO_QUERY = defineQuery(`
     titulo,
     "slug": slug.current,
     anio,
-    portada
+    portada ${IMAGEN}
   }
 `);
 
-/** Carrusel de la Home: solo las destacadas (spec §5.2). */
+/** Carrusel de la Home: solo los destacados (spec §5.2). */
 export const TRABAJOS_DESTACADOS_QUERY = defineQuery(`
   *[_type == "trabajo" && destacado == true && defined(slug.current)]
   | order(orderRank)
@@ -31,7 +32,7 @@ export const TRABAJOS_DESTACADOS_QUERY = defineQuery(`
     _id,
     titulo,
     "slug": slug.current,
-    portada
+    portada ${IMAGEN}
   }
 `);
 
@@ -46,8 +47,8 @@ export const TRABAJO_QUERY = defineQuery(`
     anio,
     descripcion,
     creditos[]{ _key, rol, valor },
-    portada,
-    galeria[]{ _key, ..., },
+    portada ${IMAGEN},
+    galeria[] ${IMAGEN},
     seoTitle,
     seoDescription,
     orderRank

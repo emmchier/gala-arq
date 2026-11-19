@@ -188,10 +188,11 @@
   }
   html {
     @apply font-sans;
-    /* spec §4.2: TODO el sitio es Manrope Light. El 300 es el peso por
-       defecto, no una excepcion. El 200 aparece una sola vez (idioma
-       inactivo) y el 500 solo en el logo, que usa Josefin Sans. */
-    font-weight: 300;
+    /* spec §4.2: el peso base es 400 (regular). El Figma usa Light 300, pero
+       a tamano real se ve demasiado fragil (decision del usuario, 19/11/2026).
+       El 300 queda para el idioma inactivo del switcher, que mantiene asi su
+       diferencia de un paso contra el activo. */
+    font-weight: 400;
   }
   body {
     @apply bg-paper text-ink;

@@ -77,7 +77,7 @@ export default function TokensPage() {
       <Row rol="text-ui" specs="14 / 20 / sin tracking">
         <span className="text-ui text-ink">EN</span>
         <span className="text-ui text-quiet"> &middot; </span>
-        <span className="text-ui text-quiet font-extralight">ES</span>
+        <span className="text-ui text-quiet font-light">ES</span>
       </Row>
       <Row rol="text-social" specs="14 / 16 / sin tracking">
         <span className="text-social text-quiet">Instagram</span>
