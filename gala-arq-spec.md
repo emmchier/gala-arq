@@ -572,7 +572,91 @@ Cada `figure.gallery-item` tiene un `button.gallery-open` que abre el lightbox.
 > scrollea. En el Figma la columna es más corta que la galería (724 vs 1691), así que si no es
 > sticky queda un hueco enorme de blanco. **Confirmar con el usuario (§16).**
 
-## 5.5 Pantallas pendientes de diseño
+## 5.5 Mobile y responsive — **propuesta nuestra, a refinar**
+
+> El Figma solo tiene desktop (1366px). El usuario decidió que **la propuesta mobile la hacemos
+> nosotros** y que después él la diseña y refinamos sobre esto.
+> **Estado: propuesta. No es diseño aprobado.** Se construye así salvo que el Figma diga otra cosa.
+
+### Breakpoints
+
+| Nombre | Rango | Qué layout |
+|---|---|---|
+| `base` | < 640px | mobile |
+| `md` | 640 – 1023px | tablet |
+| `lg` | ≥ 1024px | **el layout del Figma** |
+
+Los valores de §4.5 son los de `lg`. Mobile-first: se escribe el mobile y `lg:` lo lleva al Figma.
+
+| Medida | mobile | desktop |
+|---|---|---|
+| Margen lateral | **20px** | 64px |
+| Header | 56px | 80px |
+| Gap header → main | 32px | 64px |
+
+### ⚠️ El problema del tracking en pantallas angostas
+
+**Es el riesgo de craft número uno del mobile.** El `0.16em` que hace respirar al desktop, en una
+línea de 335px produce **líneas cortas y muy irregulares**: el texto queda picado.
+
+**Propuesta:**
+- **Texto de cuerpo** (descripción, créditos): bajar a **`0.08em`** por debajo de `md`.
+- **Etiquetas en mayúscula** (nav, breadcrumb, PREV/NEXT): **mantener `0.16em`**. Son strings
+  cortos que no wrapean, y ahí el tracking es la identidad del diseño.
+
+Los tamaños no cambian: 24 / 16 / 14 / 10 se sostienen bien en mobile.
+
+### Navegación: lo único que hay que inventar
+
+El desktop pone la nav **solo en la Home**, y en Listado y Ficha el sidebar lo ocupa el
+breadcrumb (§5.1). En mobile eso deja las páginas internas sin salida.
+
+**Propuesta:**
+- **Home:** la nav **no necesita menú**. Es el contenido de la página: va como lista vertical
+  debajo del carrusel, y los links sociales debajo. Mismo orden que el desktop, apilado.
+- **Listado y Ficha:** un botón de texto **`MENÚ`** en el header, con el mismo estilo que el
+  switcher de idioma, que abre un **`sheet` de shadcn** con los 4 links. El breadcrumb pasa a una
+  franja propia debajo del header, alineado a la izquierda.
+
+> Es la intervención más chica que resuelve el problema sin tocar el lenguaje visual: un botón de
+> texto, misma tipografía, mismo peso. Nada de ícono de hamburguesa.
+
+### Las tres pantallas en mobile
+
+**Home.** Header → carrusel a ancho completo → dots → nav vertical → links sociales → footer.
+El carrusel suma **swipe**; los dots se mantienen; la flecha se achica y se mete dentro del borde
+en lugar de superponerse.
+
+**Listado.** Breadcrumb → grilla de **2 columnas** (3 en `md`). Dos columnas mantienen el
+carácter de índice del diseño; una sola columna lo convertiría en un feed, que es otro producto.
+La flecha de hover no existe en touch: la card entera es el área clickeable y listo.
+
+**Ficha.** El orden de apilado es la decisión real. Propuesta:
+
+```
+título · ubicación · año
+galería
+descripción
+créditos
+PREV · NEXT
+```
+
+> **Por qué la galería antes del texto:** en desktop las dos columnas conviven y ninguna "va
+> primero". En mobile hay que elegir, y quien entra a un proyecto de arquitectura quiere **verlo**.
+> El encabezado alcanza para saber qué está mirando; la memoria se lee después.
+> ⚠️ Es lo más discutible de esta propuesta: **marcarlo para refinar con el Figma.**
+
+La galería va a **2 columnas**, y el sticky de la columna de texto (§5.4) **no aplica**: en mobile
+no hay dos columnas que desincronizar.
+
+### Qué NO cambia en mobile
+
+- Las dos tipografías, los tamaños y los colores.
+- El footer, que ya es una línea de 10px.
+- Las transiciones (§4.6).
+- El recorte **cuadrado** de la grilla.
+
+## 5.6 Pantallas pendientes de diseño
 
 **Estudio, Noticias y Contacto todavía no están en Figma.** El usuario confirmó que van a seguir
 los mismos patrones con pequeñas variaciones.
@@ -988,8 +1072,9 @@ El Studio ya hace alta, edición, borrado, draft/publish, historial y rollback. 
 
 # §13. Riesgos y cosas a vigilar
 
-1. **El Figma solo tiene desktop (1366px).** No hay diseño mobile ni tablet. El responsive va a
-   ser **decisión nuestra** y hay que validarlo con el usuario antes de darlo por bueno (§16).
+1. **El Figma solo tiene desktop (1366px).** El mobile es **propuesta nuestra** (§5.5) y hay que
+   refinarlo cuando el usuario lo diseñe. El riesgo concreto: **el tracking de `0.16em` pica el
+   texto en pantallas angostas** (§5.5), y eso no se ve hasta tenerlo renderizado.
 2. **Correr Next.js en Cloudflare Workers es lo más riesgoso del stack.** Por eso el deploy es el
    paso 0.4 y no el último. Los dos errores clásicos: `WORKER_SELF_REFERENCE` faltante (500 en
    `workers.dev`) y el KV del cache de ISR sin configurar.
@@ -1043,7 +1128,7 @@ Ordenadas por cuándo bloquean:
 
 | # | Pregunta | Bloquea |
 |---|---|---|
-| 1 | **Responsive:** no hay diseño mobile. ¿Lo diseña el usuario o lo proponemos nosotros? | paso 0.3 |
+| 1 | **¿La galería va antes del texto en la ficha mobile?** Lo más discutible de §5.5. | paso 1.5 |
 | 2 | **¿El listado lleva un `h1` visible?** Hay un placeholder vacío en el diseño (§5.3). | paso 1.4 |
 | 3 | **¿La columna de texto de la ficha es sticky?** Si no, queda un hueco grande de blanco (§5.4). | paso 1.5 |
 | 4 | **¿Se traducen los segmentos de ruta?** `/en/works` vs `/en/trabajos` (§9.3). | paso 2.2 |
@@ -1061,6 +1146,7 @@ Ordenadas por cuándo bloquean:
 | ¿Cuándo se compra el dominio? | **Cuando se sepa el nombre**, no antes. No hay ventaja de SEO en comprarlo temprano (§17.3). | 19/11/2026 |
 | ¿Cómo se manejan develop y production? | Un solo entorno hasta la fase 3; ahí se agrega producción (§6.5). | 19/11/2026 |
 | ¿Cómo son las transiciones? | Solo fades, 320 ms, una sola curva (§4.6). | 19/11/2026 |
+| ¿Quién diseña el mobile? | **Lo proponemos nosotros** (§5.5) y el usuario lo refina cuando lo diseñe. | 19/11/2026 |
 
 ---
 
@@ -1091,6 +1177,7 @@ Ordenadas por cuándo bloquean:
 | **2026-11-19** | **El dominio se compra cuando se sepa el nombre**, no antes: comprarlo temprano no da ventaja de SEO. |
 | **2026-11-19** | **El proyecto de Sanity se crea dentro de una organización**, para que el traspaso a Gala sea una transferencia soportada y no una migración a mano. |
 | **2026-11-19** | **El contenido dummy vive en Sanity**, no en fixtures locales: prueba el pipeline real y no se tira después. |
+| **2026-11-19** | **Propuesta de mobile nuestra (§5.5)**, a refinar cuando el usuario la diseñe. Incluye bajar el tracking del cuerpo a `0.08em` y un botón `MENÚ` en las páginas internas. |
 
 ---
 
