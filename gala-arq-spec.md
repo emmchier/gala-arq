@@ -25,28 +25,29 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `1.1` — Proyecto de Sanity y Studio en `/studio`
+> ### Paso `1.2` — Schemas de Sanity
 >
-> **Estado:** no empezado. **La fase 0 está cerrada:** el cascarón está online.
+> **Estado:** no empezado. El `1.1` quedó ✅ el 19/11/2026: el Studio abre en `/studio`, local y
+> en producción, contra el dataset `development`.
 >
-> **Qué hay que hacer:**
-> 1. Instalar `sanity` y `next-sanity`.
-> 2. Crear el dataset **`development`** y apuntar la app ahí (`production` queda vacío hasta la
->    fase 3, §6.5).
-> 3. Montar el Studio en `app/studio/[[...tool]]/page.tsx`, **fuera del layout público** y con
->    `noindex`.
-> 4. Variables de entorno en `.env.local`: `NEXT_PUBLIC_SANITY_PROJECT_ID=3ibcmrqh`,
->    `NEXT_PUBLIC_SANITY_DATASET=development`.
+> **Qué hay que hacer:** definir los schemas de §8 en `src/sanity/schemas/`:
+> - **`proyecto`** (§8.1), con el objeto `credito` y las validaciones: `titulo`, `slug`, `anio`,
+>   `portada` y el `alt` de cada imagen de la galería.
+> - **`configuracion`** (§8.2) como **singleton**, fijado en la estructura.
+> - Ordenamiento por drag-and-drop: `pnpm add @sanity/orderable-document-list`.
 >
-> **Datos que ya están:** `projectId` = `3ibcmrqh`, organización `Gala Arq` = `ozejyyn9m`.
+> Después armar `src/sanity/structure.ts`: lista de obras ordenable, `configuracion` fijada y
+> fuera de "crear nuevo", y preview con portada + título + año (§12.2).
 >
-> ⚠️ **No usar el scaffold que sugiere el panel de Sanity:** crea el Studio en una carpeta
-> aparte. Nosotros lo queremos **embebido** en esta app.
+> ⚠️ **Sin campo `color` y sin campo `categoria`** (§8.1). Y sin `publicado` ni `orden`: los
+> reemplazan el draft/publish nativo y `orderRank`.
 >
-> **Criterio de terminado:** `/studio` abre el Studio contra el dataset `development`, y
-> `pnpm build` pasa.
+> **No depende de nada externo.**
 >
-> **Cuando termine:** marcar `1.1` ✅ en §1.9 y mover este bloque a `1.2`.
+> **Criterio de terminado:** se puede cargar una obra completa desde el Studio y `pnpm build`
+> pasa.
+>
+> **Cuando termine:** marcar `1.2` ✅ en §1.9 y mover este bloque a `1.3`.
 
 ## Lo que ya está resuelto
 
@@ -196,8 +197,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | | 0.2 Tokens del Figma | ✅ 19/11/2026 |
 | | 0.3 Layout base | ✅ 19/11/2026 |
 | | 0.4 Primer deploy | ✅ 19/11/2026 |
-| **Fase 1** | 1.1 Proyecto de Sanity + Studio | 🔴 **NEXT** |
-| | 1.2 Schemas | ⬜ |
+| **Fase 1** | 1.1 Proyecto de Sanity + Studio | ✅ 19/11/2026 |
+| | 1.2 Schemas | 🔴 **NEXT** |
 | | 1.3 Queries + typegen | ⬜ |
 | | 1.4 Listado | ⬜ |
 | | 1.5 Ficha | ⬜ |
@@ -232,7 +233,9 @@ Referencias: 🔴 next · 🟡 en curso · ✅ hecho · ⬜ pendiente
 | Proyecto de Sanity | ✅ **Gala Arq** · `projectId` = **`3ibcmrqh`** |
 | Organización de Sanity | ✅ **`Gala Arq`** = `ozejyyn9m`. El proyecto ya está transferido a ella (19/11/2026) |
 | Código | ✅ paso 0.1: Next 16.4.6 + React 19.3 + Tailwind 4.3 + TS 5.9 + shadcn (radix/nova) + Zustand 5.1 + OpenNext 1.20.17 |
-| Dataset de trabajo | `development` (se crea en el paso 1.1). `production` ya existe y queda vacío hasta la fase 3 |
+| Dataset de trabajo | ✅ **`development`** (público). `production` existe y queda vacío hasta la fase 3 |
+| Studio | ✅ **`/studio`**, local y en producción |
+| Orígenes CORS | ✅ `http://localhost:3000` y la URL de `workers.dev` (§12.3) |
 | Cuenta de Cloudflare | ✅ creada y autenticada con `wrangler login` |
 | Worker | ✅ **`gala-arq-dev`** desplegado · KV del cache: `NEXT_INC_CACHE_KV` |
 | URL de develop | ✅ **https://gala-arq-dev.gala-arq.workers.dev** |
@@ -1406,6 +1409,7 @@ Las organizaciones de Sanity son gratis, así que una por cliente no cuesta nada
 |---|---|---|
 | **Sanity** | el usuario crea el proyecto **dentro de una organización**, no como proyecto personal | se transfiere la organización, o el proyecto a una organización de Gala |
 | **Cloudflare** | cuenta del usuario, Worker en `workers.dev` | ver abajo |
+| **Identidad** | ⚠️ el usuario autenticó **Sanity y Cloudflare con su cuenta de GitHub** | Gala necesita sus propias cuentas; esa identidad no se transfiere |
 | **Dominio** | **no se compra todavía** (§17.3) | lo compra Gala en su cuenta, o se transfiere |
 | **GitHub** | repo del usuario | se transfiere el repo o se la agrega como colaboradora |
 
