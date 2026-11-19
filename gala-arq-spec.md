@@ -111,9 +111,9 @@ contenido. Todo lo demás es llenarlo.
 
 | Paso | Qué | Criterio de terminado |
 |---|---|---|
-| **1.1** | **Proyecto de Sanity** + Studio embebido en `/studio`. El usuario crea el proyecto y pasa `projectId`. | Gala puede entrar a `/studio` y ver el Studio vacío |
+| **1.1** | **Proyecto de Sanity** + Studio embebido en `/studio`. ⚠️ **Crearlo dentro de una organización**, no suelto en la cuenta personal: de eso depende que el traspaso a Gala sea simple (§16.5). Dataset `development`. | el Studio abre en `/studio` |
 | **1.2** | **Schemas** `proyecto` y `configuracion` (§8), con el orden por drag-and-drop y el singleton. | Se puede cargar un proyecto completo desde el Studio |
-| **1.3** | **Queries GROQ + typegen** (§8.5). Centralizadas, tipadas, sin inline. | `pnpm typegen` genera tipos y el build pasa en strict |
+| **1.3** | **Queries GROQ + typegen** (§8.5) **+ carga de contenido dummy** en `development` (§18.5). | `pnpm typegen` genera tipos, el build pasa en strict y hay ~10 obras de prueba cargadas |
 | **1.4** | **Listado** `/trabajos` (§5.3). Es la pantalla más simple de las tres: grilla + card. | El listado muestra los proyectos reales de Sanity |
 | **1.5** | **Ficha** `/trabajos/[slug]` (§5.4). Columna de texto + grilla de galería + lightbox + PREV/NEXT. | Una obra real renderiza completa, con lightbox andando |
 | **1.6** | **Home** `/` (§5.2). El carrusel de destacados. Va última de las tres **porque es la única con estado de cliente** y conviene hacerla cuando el resto ya está probado. | El carrusel anda con teclado, con los dots y con el botón |
@@ -139,8 +139,9 @@ contenido. Todo lo demás es llenarlo.
 |---|---|---|
 | **3.1** | **Webhook de revalidación** (§7.1): Sanity → `/api/revalidate` → `revalidateTag`. | Gala publica un cambio y el sitio lo muestra en segundos |
 | **3.2** | **SEO**: `generateMetadata`, Open Graph con la portada, `sitemap.ts`, `robots.ts`, datos estructurados. | El sitemap lista las dos versiones de idioma |
-| **3.3** | **Dominio** en Cloudflare (§17.4) + HTTPS + redirects. | El sitio responde en su dominio propio |
+| **3.3** | **Entorno de producción** (§6.5): Worker `gala-arq` + dataset `production` + migrar el contenido. | los dos entornos conviven, develop con `noindex` |
 | **3.4** | **Accesibilidad y performance**: skip link, foco visible, teclado en el lightbox, `sizes` correctos, Lighthouse. | Lighthouse ≥ 95 en Performance y Accessibility |
+| **3.5** | **Dominio** en Cloudflare (§17.3) + HTTPS + redirects. **Último paso de la fase**: recién cuando el sitio está testeado. | el sitio responde en su dominio propio |
 
 ## 1.6 Fase 4 — Las tres pantallas que faltan
 
@@ -154,7 +155,29 @@ contenido. Todo lo demás es llenarlo.
 | **4.2** | **Noticias** `/noticias` — lista de fechas de eventos (§8.3) |
 | **4.3** | **Contacto** `/contacto` — mail, Instagram, Behance, dirección |
 
-## 1.7 Tablero de avance
+## 1.7 Fase 5 — Carga de obra real
+
+> **Bloqueada por contenido.** Depende de que Gala entregue fotos, textos y créditos.
+
+Hasta que llegue, **todo se construye con contenido dummy** cargado en Sanity (§18.5).
+
+| Paso | Qué |
+|---|---|
+| **5.1** | Carga de la obra real, créditos confirmados y revisión visual de las fotos |
+
+## 1.8 Fase 6 — Traspaso a Gala
+
+Cuando el sitio está en producción y funcionando: pasar la propiedad de Sanity, Cloudflare y el
+repo, dejando a los dos con acceso.
+
+| Paso | Qué |
+|---|---|
+| **6.1** | Traspaso de Sanity, Cloudflare, dominio y repo (§16.5) |
+
+> 📌 **Lo que hay que hacer ahora para que esto sea simple después** está en §16.5, y afecta al
+> paso 1.1: el proyecto de Sanity se crea **dentro de una organización**.
+
+## 1.9 Tablero de avance
 
 Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del progreso.**
 
@@ -175,12 +198,14 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | | 2.3 Switcher + hreflang | ⬜ |
 | **Fase 3** | 3.1 Webhook de revalidación | ⬜ |
 | | 3.2 SEO | ⬜ |
-| | 3.3 Dominio | ⬜ |
+| | 3.3 Entorno de producción | ⬜ |
 | | 3.4 Accesibilidad y performance | ⬜ |
+| | 3.5 Dominio | ⬜ |
 | **Fase 4** | 4.1 Estudio | ⬜ bloqueada por diseño |
 | | 4.2 Noticias | ⬜ bloqueada por diseño |
 | | 4.3 Contacto | ⬜ bloqueada por diseño |
 | **Fase 5** | 5.1 Carga de obra real | ⬜ bloqueada por contenido |
+| **Fase 6** | 6.1 Traspaso a Gala (§16.5) | ⬜ |
 
 Referencias: 🔴 next · 🟡 en curso · ✅ hecho · ⬜ pendiente
 
@@ -200,6 +225,7 @@ Referencias: 🔴 next · 🟡 en curso · ✅ hecho · ⬜ pendiente
 | Hosting | Cloudflare Workers — no creado todavía |
 | Dominio | a definir (§17.4) |
 | Idiomas | **`es` (default) + `en`** (§9) |
+| Assets de prueba | `assets/` — ver §18.5 |
 
 ---
 
@@ -302,21 +328,33 @@ La paleta es **monocromática salvo los dots del carrusel**.
 | `muted` | `#6f7579` | **todo el texto de cuerpo**, nav, metadatos, footer |
 | `bg` | `#ffffff` | fondo |
 
-**Dots del carrusel** (§5.2) — el único color del sitio:
+### Paleta de los dots del carrusel
 
-| Dot | Valor |
-|---|---|
-| activo | `#819b4d` (verde oliva, saturado) |
-| pastel 1 | `#efdfd6` |
-| pastel 2 | `#daebaf` |
-| pastel 3 | `#cff1f1` |
-| pastel 4 | `#e8c6c2` |
+> Frame `Dots` (`45:5891`). **Resuelto el 19/11/2026.**
 
-> ⚠️ **Pregunta abierta (§16):** los 4 dots inactivos son **4 colores distintos**, no un gris
-> compartido. Eso sugiere que **cada proyecto lleva su propio color de acento**, mostrado pastel
-> cuando está inactivo y saturado cuando está activo. Si es así, `color` es un campo de
-> `proyecto` (§8.1). **Confirmar con el usuario antes de modelarlo.** Mientras tanto el schema lo
-> incluye como opcional.
+El único color del sitio. Son **5 colores con dos estados cada uno**, y la secuencia **cicla por
+posición**: el dot `n` usa el color `n % 5`.
+
+| # | Default | Active |
+|---|---|---|
+| 1 | `#c9d1b9` | `#819b4d` |
+| 2 | `#efdfd6` | `#bb8c72` |
+| 3 | `#daebaf` | `#a2c73e` |
+| 4 | `#cff1f1` | `#5eb6b6` |
+| 5 | `#e8c6c2` | `#bb6d65` |
+
+> ✅ **Esto cierra la pregunta de si cada proyecto lleva su color.** No lo lleva: el color sale de
+> la **posición en el carrusel**, no del contenido. **No hay campo `color` en el schema.**
+> Es una función pura del índice:
+> ```ts
+> const DOTS = [ ... ] as const
+> const dot = DOTS[i % DOTS.length]
+> ```
+
+Medidas: **8px** de diámetro, **16px** de paso (8 de gap).
+
+> 📌 Los dots existen para el **slider automático de la Home**, que es una idea inicial y puede
+> eliminarse más adelante. Para el lanzamiento se mantiene.
 
 ## 4.5 Grilla y layout
 
@@ -362,9 +400,30 @@ Todo el sitio vive en una grilla de columnas fijas. Medidas tomadas a **1366px**
 valores de arriba son los de 1366px; a partir de ahí el responsive es decisión nuestra, porque
 **el Figma solo tiene desktop** (§16).
 
-## 4.6 Reglas de craft
+## 4.6 Movimiento y transiciones
 
-- **Sin animaciones decorativas.** A lo sumo fades de 150–200 ms en navegación e imágenes.
+**Solo fades de entrada y salida.** Nada de slides, zooms, parallax, rebotes ni stagger.
+
+| Token | Valor | Para qué |
+|---|---|---|
+| `--dur-fast` | **200 ms** | hover de la flecha de la card, estados de link |
+| `--dur` | **320 ms** | **el default.** Fade de entrada de imágenes y de página |
+| `--dur-slow` | **480 ms** | crossfade del carrusel |
+| `--ease` | `cubic-bezier(0.4, 0, 0.2, 1)` | **toda** transición del sitio |
+
+Reglas:
+- **Una sola curva en todo el sitio.** Dos curvas distintas se notan y ensucian.
+- Las imágenes entran con fade **desde el LQIP**, no desde blanco: ya hay un placeholder borroso
+  (§18.1), así que la foto resuelve sobre él.
+- El carrusel hace **crossfade**, no desplazamiento: las dos imágenes se superponen y una se
+  desvanece sobre la otra.
+- **Respetar `prefers-reduced-motion`:** con la preferencia activa, las duraciones van a `0ms`.
+  No es opcional.
+- **Nada anima al hacer scroll.** El contenido está presente desde el primer frame.
+
+## 4.7 Reglas de craft
+
+- **Sin animaciones decorativas.** El movimiento es solo de entrada y salida (§4.7).
 - **Sin sombras, sin gradientes, sin bordes redondeados** salvo donde el Figma los tenga.
 - El **lightbox** necesita foco atrapado, `Escape` y flechas.
 - **Skip link** "Saltar al contenido" al principio del layout.
@@ -592,7 +651,60 @@ beta no se le pone encima el sitio de una clienta.
 - Hace falta el service binding **`WORKER_SELF_REFERENCE`**. Si falta: **500 en `workers.dev`**.
 - El cache de ISR necesita un **KV namespace** en `wrangler`.
 
-## 6.5 Qué NO se usa
+## 6.5 Entornos: develop y production
+
+> **Principio: no se construyen dos entornos antes de que haya algo que proteger.**
+> Hasta la fase 3 el sitio no tiene contenido real ni dominio ni visitantes. Un segundo entorno
+> en el día uno es configuración que mantener a cambio de nada.
+
+### Cómo se trabaja en cada fase
+
+| Fases | Entornos | Dónde |
+|---|---|---|
+| **0 → 2** | **uno solo: develop** | Worker `gala-arq-dev` en `*.workers.dev` + dataset `development` |
+| **3 en adelante** | **develop + production** | se agrega `gala-arq` con el dominio + dataset `production` |
+
+`*.workers.dev` no está indexado y nadie lo conoce: alcanza como entorno de desarrollo y además
+**descarta el riesgo de Workers temprano** (§13.2).
+
+### Cómo queda a partir de la fase 3
+
+| | develop | production |
+|---|---|---|
+| Worker | `gala-arq-dev` | `gala-arq` |
+| URL | `gala-arq-dev.<cuenta>.workers.dev` | el dominio propio |
+| Dataset de Sanity | `development` | `production` |
+| Studio | `/studio` apuntando a `development` | `/studio` apuntando a `production` |
+| Indexación | `robots: noindex` **siempre** | indexable |
+
+**Dos Workers, no dos cuentas.** Se configuran con **environments de wrangler** en
+`wrangler.jsonc` (`[env.production]`), y se deploya con `wrangler deploy --env production`.
+
+**Los dos datasets entran justo en el plan free de Sanity**, que incluye exactamente 2 (§17.1).
+No queda lugar para un tercero: si alguna vez hace falta, es upgrade.
+
+### Trampas conocidas
+
+- ⚠️ **`vars` no se hereda entre environments de wrangler.** Cada environment declara los suyos,
+  completos. Si se asume herencia, producción sale con las variables de develop.
+- ⚠️ **`--env` no siempre se respeta a través de `opennextjs-cloudflare deploy`** (hay un issue
+  abierto en `workers-sdk`). Si pasa, invocar **`wrangler deploy --env` directamente**.
+- ⚠️ **`NEXT_PUBLIC_*` se hornea en build time.** Producción necesita **su propio build**, no se
+  puede promover el artefacto de develop.
+- Las variables locales van en `.dev.vars`, y `.dev.vars*` al `.gitignore`.
+
+### Branches
+
+Proyecto de un desarrollador: **sin gitflow**. `main` es la verdad; se deploya a develop desde
+`main` a mano, y a producción **solo deliberadamente**. CI/CD se evalúa en la fase 3, no antes.
+
+### Verificación local antes de pushear
+
+`next dev` para iterar, pero **antes de deployar** correr el preview de OpenNext, que ejecuta el
+build de producción en **workerd**. Es lo único que atrapa lo que rompe específicamente en
+Workers y no en Node.
+
+## 6.6 Qué NO se usa
 
 - **Wix** en ninguna de sus formas. Descartado el 19/11/2026.
 - **Vercel** como hosting: el dominio y el hosting van en Cloudflare.
@@ -663,7 +775,6 @@ espeja datos del servidor es un bug esperando a pasar.
 | `portada` | `image` (hotspot) | card, carrusel | **obligatoria** |
 | `galeria` | `array[image]` (hotspot) | ficha | cada una con `alt` **obligatorio** |
 | `destacado` | `boolean` | Home | aparece en el carrusel |
-| `color` | `color` / `string` | dots del carrusel | ⚠️ **a confirmar** (§4.4) |
 | `orderRank` | `string` | orden curado | drag-and-drop en el Studio |
 | `seoTitle`, `seoDescription` | `string` | `<head>` | opcionales, con fallback |
 
@@ -688,6 +799,9 @@ Se renderiza como `{rol} {valor}`, una línea por ítem, omitiendo el rol si est
    desincroniza.
 2. **No hay campo `orden` numérico.** Se usa **`@sanity/orderable-document-list`**, que da
    drag-and-drop real. Reordenar con enteros obliga a renumerar vecinos a mano.
+
+> ✅ **No hay `color`.** El color del dot sale de la posición en el carrusel, no del proyecto
+> (§4.4).
 
 > ⚠️ **No hay `categoria`.** El diseño no tiene categorías ni filtros (§5.3). Si más adelante Gala
 > las pide, se agrega el campo **y** se rediseña el listado. **No agregarlo "por las dudas".**
@@ -929,16 +1043,24 @@ Ordenadas por cuándo bloquean:
 
 | # | Pregunta | Bloquea |
 |---|---|---|
-| 1 | **¿Cada proyecto tiene su color de acento?** Los 4 dots inactivos son 4 colores distintos (§4.4). | paso 1.2 (schema) |
-| 2 | **¿La columna de texto de la ficha es sticky?** Si no, queda un hueco grande de blanco (§5.4). | paso 1.5 |
-| 3 | **¿El listado lleva un `h1` visible?** Hay un placeholder vacío en el diseño (§5.3). | paso 1.4 |
+| 1 | **Responsive:** no hay diseño mobile. ¿Lo diseña el usuario o lo proponemos nosotros? | paso 0.3 |
+| 2 | **¿El listado lleva un `h1` visible?** Hay un placeholder vacío en el diseño (§5.3). | paso 1.4 |
+| 3 | **¿La columna de texto de la ficha es sticky?** Si no, queda un hueco grande de blanco (§5.4). | paso 1.5 |
 | 4 | **¿Se traducen los segmentos de ruta?** `/en/works` vs `/en/trabajos` (§9.3). | paso 2.2 |
-| 5 | **Responsive:** no hay diseño mobile. ¿Lo diseña el usuario o lo proponemos nosotros? | paso 0.3 |
-| 6 | **¿Cómo se llega a Estudio/Noticias/Contacto** desde el Listado y la Ficha? (§5.1) | fase 4 |
-| 7 | **Dominio:** ¿lo tiene Gala? ¿`galaarq.com`? ¿`.com.ar`? | paso 3.3 |
-| 8 | ¿Las cuentas de Sanity y Cloudflare van a nombre del usuario o de Gala? | paso 1.1 |
-| 9 | ¿Formulario de contacto o solo mail? (§8.4) | fase 4 |
-| 10 | ¿Cuántas obras tiene para cargar al inicio? Define si hace falta carga masiva. | fase 5 |
+| 5 | **¿Cómo se llega a Estudio/Noticias/Contacto** desde el Listado y la Ficha? (§5.1) | fase 4 |
+| 6 | **¿Formulario de contacto o solo mail?** (§8.4) | fase 4 |
+| 7 | **El nombre del dominio.** No se compra hasta saberlo (§17.3). | paso 3.5 |
+| 8 | **¿Se mantiene el slider automático de la Home?** El usuario lo marcó como idea inicial, posible de eliminar. Para el lanzamiento se mantiene (§5.2). | fase 5 |
+
+### Resueltas
+
+| Pregunta | Resolución | Cuándo |
+|---|---|---|
+| ¿Cada proyecto tiene su color de acento? | **No.** El color sale de la posición en el carrusel: paleta de 5 que cicla (§4.4). | 19/11/2026 |
+| ¿Las cuentas van a nombre del usuario o de Gala? | **Del usuario**, y se traspasan al final. Sanity se crea **dentro de una organización** para que el traspaso sea simple (§16.5). | 19/11/2026 |
+| ¿Cuándo se compra el dominio? | **Cuando se sepa el nombre**, no antes. No hay ventaja de SEO en comprarlo temprano (§17.3). | 19/11/2026 |
+| ¿Cómo se manejan develop y production? | Un solo entorno hasta la fase 3; ahí se agrega producción (§6.5). | 19/11/2026 |
+| ¿Cómo son las transiciones? | Solo fades, 320 ms, una sola curva (§4.6). | 19/11/2026 |
 
 ---
 
@@ -963,6 +1085,60 @@ Ordenadas por cuándo bloquean:
 | **2026-11-19** | **Bilingüe híbrido:** document-level para `proyecto`/`noticia`, field-level para `configuracion`. `es` por defecto sin prefijo. |
 | **2026-11-19** | **Plan maestro de 6 fases (§1)**, con deploy temprano (0.4) y bilingüe después de que un idioma funcione. |
 | **2026-11-19** | La Home se construye **última** de las tres pantallas: es la única con estado de cliente. |
+| **2026-11-19** | **Los dots son una paleta de 5 que cicla por posición**, con estado default y active. No hay campo `color` en el schema. |
+| **2026-11-19** | **Movimiento: solo fades**, 320 ms de default, una sola curva, y `prefers-reduced-motion` respetado. |
+| **2026-11-19** | **Un solo entorno hasta la fase 3.** No se construyen dos entornos antes de que haya algo que proteger. |
+| **2026-11-19** | **El dominio se compra cuando se sepa el nombre**, no antes: comprarlo temprano no da ventaja de SEO. |
+| **2026-11-19** | **El proyecto de Sanity se crea dentro de una organización**, para que el traspaso a Gala sea una transferencia soportada y no una migración a mano. |
+| **2026-11-19** | **El contenido dummy vive en Sanity**, no en fixtures locales: prueba el pipeline real y no se tira después. |
+
+---
+
+# §16.5 Traspaso del proyecto a Gala
+
+**Objetivo:** que al final Gala sea la dueña de todo y el usuario pueda desligarse sin dejarla
+colgada. Durante la construcción, el usuario trabaja solo, sin depender de logins de Gala.
+
+## Cómo se arma ahora para que el traspaso sea limpio después
+
+| Servicio | Ahora | Al traspasar |
+|---|---|---|
+| **Sanity** | el usuario crea el proyecto **dentro de una organización**, no como proyecto personal | se transfiere la organización, o el proyecto a una organización de Gala |
+| **Cloudflare** | cuenta del usuario, Worker en `workers.dev` | ver abajo |
+| **Dominio** | **no se compra todavía** (§17.3) | lo compra Gala en su cuenta, o se transfiere |
+| **GitHub** | repo del usuario | se transfiere el repo o se la agrega como colaboradora |
+
+> 📌 **Lo más importante, y hay que hacerlo en el paso 1.1:** crear el proyecto de Sanity
+> **dentro de una organización**, no suelto en la cuenta personal. Transferir un proyecto **a una
+> organización** es el camino soportado y documentado; mover un proyecto entre dos cuentas
+> personales es mucho más engorroso. Crear la organización al principio cuesta un minuto y ahorra
+> el dolor entero.
+
+## Sanity — cómo se transfiere
+
+*Project Settings → Danger zone → Transfer ownership*, eligiendo la organización destino.
+
+- Hace falta ser **administrador del proyecto y de la organización origen**, y que del lado que
+  recibe haya un administrador o billing manager.
+- ⚠️ **Las invitaciones pendientes no cuentan**: tienen que estar aceptadas de los dos lados antes
+  de intentar la transferencia. Es la causa más común del error 401 al transferir.
+- El `projectId`, los tokens y la configuración se preservan, así que **no hay que redeployar**.
+- Los dos pueden quedar como miembros: el plan free tiene 20 asientos.
+
+## Cloudflare — cómo se transfiere
+
+Mover un dominio de Registrar entre cuentas **está soportado** (*Manage Domain → Configuration*),
+pero tiene letra chica:
+
+- Hay que **desactivar DNSSEC** antes.
+- La cuenta origen **pierde toda la configuración de la zona**: los registros DNS hay que
+  rehacerlos.
+- Queda **bloqueado 30 días** para volver a transferirse.
+- El dominio tiene que tener más de 10 días de registrado.
+
+> 💡 **Por eso conviene que el dominio se compre directamente en la cuenta de Gala** cuando llegue
+> el momento: evita la transferencia entera. Crear una cuenta de Cloudflare es gratis y lleva dos
+> minutos; no hace falta que ella haga nada más que eso y poner la tarjeta.
 
 ---
 
@@ -1015,6 +1191,28 @@ Los **static assets no cuentan** contra el billing. Como el sitio es estático p
 todas las visitas se sirven como assets. Un portfolio no se acerca a los 100.000 requests diarios.
 
 ## 17.3 Dominio
+
+### Cuándo comprarlo
+
+**Cuando se sepa el nombre, no antes.** El razonamiento:
+
+- ⚠️ **Comprarlo temprano no da ventaja de SEO.** La antigüedad del dominio por sí sola no
+  posiciona: lo que cuenta es desde cuándo sirve contenido y recibe links. Un dominio estacionado
+  seis meses llega igual que uno comprado el día del lanzamiento. **No comprarlo por esta razón.**
+- Analytics y Tag Manager se configuran en una tarde el día del lanzamiento. Tampoco son razón.
+- Cloudflare Registrar vende **a precio de costo todo el año**: no hay promo de primer año que
+  perder esperando.
+- **El desarrollo no lo necesita:** `*.workers.dev` alcanza hasta la fase 3 (§6.5).
+
+**La única razón real para apurarse es la disponibilidad del nombre.** Así que en cuanto Gala
+decida cómo se llama, conviene comprarlo aunque falten semanas para publicar — no por SEO, sino
+para que no se lo lleve otro.
+
+> 💡 **Que lo compre Gala directamente en su cuenta de Cloudflare.** Mover un dominio de Registrar
+> entre cuentas se puede, pero pierde la configuración de la zona y queda bloqueado 30 días
+> (§16.5). Comprándolo en la cuenta correcta de entrada, ese trámite no existe.
+
+### Precios
 
 - **Cloudflare Registrar vende a precio de costo**, sin markup ni "promo del primer año". Un
   `.com` ronda los **US$10–12/año**.
@@ -1069,6 +1267,32 @@ material**. Conservadores a propósito.
 | Lightbox | 2560 px | `q=90` |
 
 **Nunca bajar de `q=82`.** Revisar la primera tanda al 100% de zoom, mirando cielos y hormigón.
+
+## 18.5 Contenido de prueba (mientras Gala arma el material)
+
+Gala todavía no seleccionó el material visual, así que **todo el sitio y el dashboard se
+construyen con contenido dummy**. Dos reglas:
+
+**1. El contenido dummy vive en Sanity, no en archivos locales.** Nada de fixtures en el repo:
+cargarlo en el dataset `development` desde el Studio prueba el pipeline real (Studio → Sanity →
+query → RSC → imagen) y no hay que tirar código después. Un fixture local se escribe para
+tirarlo.
+
+**2. Para verificar layout, repetir una imagen es mejor que variarlas.** En `assets/` está la
+foto de referencia (`Casa Elen`). Repetida en toda la grilla **aísla el layout del contenido**:
+si algo se mueve, es el layout. Es exactamente lo que hace el Figma.
+
+Imágenes variadas hacen falta solo para dos chequeos puntuales, y se generan **cuando se llegue a
+ellos**, no antes:
+
+- que la grilla sobreviva a fotos de **tonos distintos** (claras y oscuras conviven en la misma
+  cuadrícula);
+- que el **recorte cuadrado** no arruine fotos de proporciones distintas, que es el riesgo real
+  del diseño (§18.1).
+
+⚠️ El archivo de `assets/` se llama `img.project-image · Casa Elen.png`: **espacios y un `·` en
+el nombre**. Renombrarlo a algo como `casa-elen.png` antes de usarlo, o va a dar problemas en
+imports y en URLs.
 
 ## 18.4 Qué sube Gala
 
