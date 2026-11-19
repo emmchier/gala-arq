@@ -365,10 +365,29 @@ posición**: el dot `n` usa el color `n % 5`.
 > const dot = DOTS[i % DOTS.length]
 > ```
 
-Medidas: **8px** de diámetro, **16px** de paso (8 de gap).
+### ⚠️ No son dots: son barras de progreso
 
-> 📌 Los dots existen para el **slider automático de la Home**, que es una idea inicial y puede
-> eliminarse más adelante. Para el lanzamiento se mantiene.
+> Aclarado por el usuario el 19/11/2026, con captura.
+
+**Se comportan como los loaders de stories de Instagram.**
+
+| Parte | Color |
+|---|---|
+| **riel** | **gris** — token `--color-rail`, `#e4e6e7` |
+| **relleno** | el color **active** (saturado) de la paleta |
+
+Comportamiento:
+
+- Hay **una barra por trabajo destacado**, hasta 12.
+- Las barras **anteriores** a la actual quedan llenas al 100%.
+- La **actual** se va llenando durante la diapositiva.
+- Las **siguientes** quedan solo con el riel gris.
+- El color sale de la **posición**: barra `n` usa el color `n % 5`, así que **con más de 5
+  destacados se repiten**. Es lo esperado.
+
+> ⚠️ **Los 5 colores `default` (pastel) quedan sin uso** con el riel gris. Están extraídos del
+> Figma y documentados por si aparecen en otra pantalla, pero **hoy no los usa nada**.
+> Confirmar antes de borrarlos.
 
 ## 4.5 Grilla y layout
 
@@ -573,14 +592,25 @@ Cambia según la pantalla:
 - `button.carousel-next`: botón circular de 42px con flecha, **superpuesto sobre el borde derecho
   de la imagen**, centrado verticalmente.
 
-**Comportamiento:**
-- Es el **único componente con estado de cliente de todo el sitio** (§7.3). Por eso se construye
-  último en la fase 1.
-- Teclado: flechas izquierda/derecha. Los dots son `button` con `aria-label`.
-- Sin autoplay (no está en el diseño y es hostil en un portfolio).
+### El carrusel es automático
+
+> Definido por el usuario el 19/11/2026. **Corrige lo que decía antes este spec**, que daba por
+> sentado que no había autoplay.
+
+- **Avanza solo**, con las barras de progreso de §4.4 marcando el tiempo de cada diapositiva.
+- Se adelanta **tocando o swipeando la imagen**, no solo con el botón.
+- Muestra los trabajos con **"Destacado en Home"** marcado: se esperan **6 o 7, hasta 12**.
+- La paleta de barras cicla cada 5, así que con más de 5 destacados se repiten colores. Es lo
+  esperado, no un error.
+- Teclado: flechas izquierda y derecha. Las barras son `button` con `aria-label`.
 - `priority` en la primera imagen; el resto lazy.
 
-> **Qué muestra:** los proyectos marcados como destacados, en el orden curado. El diseño tiene 5.
+Es el **único componente con estado de cliente de todo el sitio** (§7.3), y por eso se construye
+último en la fase 1.
+
+⚠️ **Autoplay y accesibilidad:** al avanzar solo, hace falta que se **pause al hover y al foco**,
+que respete `prefers-reduced-motion` (§4.6) y que se pueda parar. Un carrusel que se mueve solo
+y no se puede detener es una barrera real, no un detalle.
 
 ## 5.3 Listado — `/trabajos`
 
@@ -618,6 +648,10 @@ accesibilidad conviene que tenga un `h1`, aunque sea visualmente oculto.
 ## 5.4 Ficha de proyecto — `/trabajos/[slug]`
 
 > Frame `33:5562`. Variante elegida: **"07 · ficha y cuadrícula compacta"**.
+>
+> ✅ **Confirmado por el usuario el 19/11/2026:** "en el listado y detalle hay listas". O sea
+> **lista de fotos, no carrusel**. Se descarta la variante 06 (imagen grande con tira de
+> miniaturas y contador), que había aparecido en una captura.
 
 ```
 ┌─ header ─────────────────────────────────────────────────────────────┐

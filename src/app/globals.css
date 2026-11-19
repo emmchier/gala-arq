@@ -31,6 +31,9 @@
   --color-quiet: #6f7579;
   --color-paper: #ffffff;
 
+  /* riel de las barras de progreso del carrusel: gris, el color carga encima */
+  --color-rail: #e4e6e7;
+
   /* dots del carrusel: 5 colores que ciclan por posicion, dos estados */
   --color-dot-1: #c9d1b9;
   --color-dot-1-on: #819b4d;
