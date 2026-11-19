@@ -1172,7 +1172,26 @@ El Studio ya hace alta, edición, borrado, draft/publish, historial y rollback. 
 5. Preview de la obra apuntando a la URL real del sitio.
 6. El selector de idioma del plugin de i18n (§9.2).
 
-## 12.3 Lo único que sí es desarrollo
+## 12.3 ⚠️ Los orígenes CORS: una vez por cada URL
+
+El Studio habla con la API de Sanity **desde el navegador**, así que cada origen desde el que se
+abra tiene que estar autorizado. Si falta, el Studio carga pero muestra *"Connect this Studio to
+your project"* y no llega a los datos.
+
+Hay que agregar, en este orden y a medida que aparecen:
+
+| Origen | Cuándo |
+|---|---|
+| `http://localhost:3000` | paso 1.1 |
+| `https://gala-arq-dev.gala-arq.workers.dev` | paso 1.1, para el Studio de develop |
+| el dominio propio | paso 3.5 |
+
+Por CLI: `pnpm sanity cors add <origen> --credentials`. Por panel: *API → CORS origins*.
+
+> 📌 **Es la causa número uno de "el Studio no carga en producción"** después de un deploy a una
+> URL nueva. No es un bug del código.
+
+## 12.4 Lo único que sí es desarrollo
 
 - `sanity.config.ts` con el `structure` custom y los plugins.
 - Los schemas (§8).
