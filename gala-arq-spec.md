@@ -399,6 +399,7 @@ Todo el sitio vive en una grilla de columnas fijas. Medidas tomadas a **1366px**
 | Sidebar (Home) | 90 px |
 | Columna de texto | 288 px |
 | Grilla de medios | 629 px |
+| Carrusel de la Home | **70% del contenido**, alineado a la derecha |
 | Gap entre columnas | 72 px |
 | **Celda de la grilla de medios** | **204 × 204 px** |
 | Gap de la grilla de medios | 8 px |
