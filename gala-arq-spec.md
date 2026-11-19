@@ -677,6 +677,14 @@ accesibilidad conviene que tenga un `h1`, aunque sea visualmente oculto.
 └─ footer ─────────────────────────────────────────────────────────────┘
 ```
 
+> 📌 **La columna de ficha lleva 64px de padding lateral** para no pegarse a la grilla de
+> imágenes (decisión del usuario, 19/11/2026).
+>
+> ⚠️ **Costo medido:** con 64px de cada lado, el texto queda en **181px, unos 17 caracteres por
+> línea**. Para lectura cómoda se buscan 45–75, y aun en una columna angosta 30–40 es el piso.
+> La descripción queda muy picada. **Alternativa a evaluar:** padding solo a la derecha, que es
+> donde están las imágenes — ahí el texto sube a 245px.
+
 **`section.project-overview`** (288 de ancho, gap 24px entre bloques):
 1. `header.project-heading` (gap 8px): `h1.project-title` (24px `ink`) · `p.project-location`
    (16px `muted`) · `time.project-year` (16px `muted`).

@@ -1,8 +1,11 @@
 import Link from "next/link";
 
 /**
- * "← VOLVER / TRABAJOS" (spec §5.1). Ocupa el sidebar en Listado y Ficha,
- * donde la navegacion principal no existe.
+ * Breadcrumb del sidebar (spec §5.1). Ocupa la columna fija en Listado y
+ * Ficha, donde la navegacion principal no existe.
+ *
+ * Es solo la flecha y el destino: "← TRABAJOS". Sin la palabra "Volver",
+ * que la flecha ya dice (decision del usuario, 19/11/2026).
  */
 export function Breadcrumb({
   backHref,
@@ -17,7 +20,7 @@ export function Breadcrumb({
     <nav aria-label="Miga de pan" className={className}>
       <Link
         href={backHref}
-        className="group inline-flex items-center gap-1 text-label text-ink uppercase"
+        className="group inline-flex items-center gap-2 text-label text-ink uppercase"
       >
         <svg
           aria-hidden
@@ -29,9 +32,7 @@ export function Breadcrumb({
         >
           <path d="M5.5 1 1 5.5 5.5 10M1 5.5h13" />
         </svg>
-        <span>Volver</span>
-        <span aria-hidden>/</span>
-        <span className="text-quiet">{current}</span>
+        <span>{current}</span>
       </Link>
     </nav>
   );
