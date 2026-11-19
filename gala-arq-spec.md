@@ -25,27 +25,28 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `0.4` — Primer deploy a Cloudflare Workers
+> ### Paso `1.1` — Proyecto de Sanity y Studio en `/studio`
 >
-> **Estado:** no empezado. Los pasos `0.1`, `0.2` y `0.3` quedaron ✅ el 19/11/2026.
+> **Estado:** no empezado. **La fase 0 está cerrada:** el cascarón está online.
 >
-> **Qué hay que hacer:** publicar el cascarón en `*.workers.dev`. Es el paso que **descarta el
-> riesgo más grande del stack** (§13.2), con el sitio todavía vacío.
+> **Qué hay que hacer:**
+> 1. Instalar `sanity` y `next-sanity`.
+> 2. Crear el dataset **`development`** y apuntar la app ahí (`production` queda vacío hasta la
+>    fase 3, §6.5).
+> 3. Montar el Studio en `app/studio/[[...tool]]/page.tsx`, **fuera del layout público** y con
+>    `noindex`.
+> 4. Variables de entorno en `.env.local`: `NEXT_PUBLIC_SANITY_PROJECT_ID=3ibcmrqh`,
+>    `NEXT_PUBLIC_SANITY_DATASET=development`.
 >
-> 1. `pnpm wrangler login` (lo hace el usuario, abre el navegador).
-> 2. Crear el bucket del cache de ISR:
->    `pnpm wrangler r2 bucket create gala-arq-dev-opennext-cache`.
-> 3. `pnpm run deploy`.
-> 4. Verificar que la URL de `workers.dev` muestre la Home y `/trabajos`.
+> **Datos que ya están:** `projectId` = `3ibcmrqh`, organización `Gala Arq` = `ozejyyn9m`.
 >
-> **Lo que el usuario tiene que hacer:** el `wrangler login`. Nada más.
+> ⚠️ **No usar el scaffold que sugiere el panel de Sanity:** crea el Studio en una carpeta
+> aparte. Nosotros lo queremos **embebido** en esta app.
 >
-> ⚠️ **El error clásico:** si falta el binding `WORKER_SELF_REFERENCE`, responde **500**. Ya está
-> en `wrangler.jsonc`, pero el `service` tiene que coincidir con el `name` del Worker.
+> **Criterio de terminado:** `/studio` abre el Studio contra el dataset `development`, y
+> `pnpm build` pasa.
 >
-> **Criterio de terminado:** la URL de `workers.dev` muestra el layout, en desktop y mobile.
->
-> **Cuando termine:** marcar `0.4` ✅ en §1.9 y mover este bloque a `1.1`.
+> **Cuando termine:** marcar `1.1` ✅ en §1.9 y mover este bloque a `1.2`.
 
 ## Lo que ya está resuelto
 
@@ -194,8 +195,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | **Fase 0** | 0.1 Scaffold | ✅ 19/11/2026 |
 | | 0.2 Tokens del Figma | ✅ 19/11/2026 |
 | | 0.3 Layout base | ✅ 19/11/2026 |
-| | 0.4 Primer deploy | 🔴 **NEXT** |
-| **Fase 1** | 1.1 Proyecto de Sanity + Studio | ⬜ |
+| | 0.4 Primer deploy | ✅ 19/11/2026 |
+| **Fase 1** | 1.1 Proyecto de Sanity + Studio | 🔴 **NEXT** |
 | | 1.2 Schemas | ⬜ |
 | | 1.3 Queries + typegen | ⬜ |
 | | 1.4 Listado | ⬜ |
@@ -234,7 +235,8 @@ Referencias: 🔴 next · 🟡 en curso · ✅ hecho · ⬜ pendiente
 | Dataset de trabajo | `development` (se crea en el paso 1.1). `production` ya existe y queda vacío hasta la fase 3 |
 | Cuenta de Cloudflare | ✅ creada y autenticada con `wrangler login` |
 | Worker | ✅ **`gala-arq-dev`** desplegado · KV del cache: `NEXT_INC_CACHE_KV` |
-| URL | `https://gala-arq-dev.gala-arq.workers.dev` — ⚠️ **falta registrar el subdominio `workers.dev`** en el dashboard |
+| URL de develop | ✅ **https://gala-arq-dev.gala-arq.workers.dev** |
+| Subdominio de la cuenta | `gala-arq.workers.dev` |
 | Dominio | a definir (§17.4) |
 | Idiomas | **`es` (default) + `en`** (§9) |
 | Assets de prueba | `assets/test-image.png` — ver §18.5 |
