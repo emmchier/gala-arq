@@ -1274,17 +1274,24 @@ Los proyectos nuevos arrancan con un **trial de Growth de 30 días**. Al vencer:
 
 ## 17.1 Sanity — plan Free
 
-Verificado contra varias fuentes en nov-2026. **Confirmar en `sanity.io/pricing` al crear el
-proyecto (paso 1.1).**
+Verificado contra `sanity.io/pricing` el 19/11/2026, **límite por límite contra lo que este
+proyecto necesita**:
 
-| | Free |
-|---|---|
-| Asientos | 20 |
-| Documentos | 10.000 |
-| Datasets | 2 (públicos) |
-| Requests a la API CDN | 1.000.000 / mes |
-| Bandwidth | 100 GB / mes |
-| Assets | 100 GB |
+| | Free | Lo que necesitamos | |
+|---|---|---|---|
+| Asientos | **20** | 2: el usuario y Gala | ✅ |
+| Documentos | **10.000** | ~50 obras × 2 idiomas + noticias ≈ 150 | ✅ |
+| Datasets | **2 (solo públicos)** | 2: `development` + `production` | ✅ **justo** |
+| Webhooks GROQ | **2** | 1: el de revalidación | ✅ |
+| Roles | **2: `administrator` y `viewer`** | Gala como `administrator` | ✅ |
+| Atributos únicos por dataset | **2.000** | los 3 schemas no llegan a 60 | ✅ |
+| Requests a la API | **250.000 / mes** | las hace el **build**, no el visitante | ✅ |
+| Bandwidth | 100 GB / mes | | ✅ |
+| Assets | 100 GB | | ✅ |
+
+> ✅ **Todo lo que está especificado en este documento entra en el plan Free.** El Studio
+> embebido, los schemas custom, los plugins (drag-and-drop e i18n), el draft/publish, el CDN de
+> imágenes con `hotspot`, el webhook de revalidación y los dos idiomas: **nada de eso es de pago.**
 
 - El Free **no tiene pay-as-you-go**: si se pasa un límite **se corta la API** (402), no se
   factura. Con el sitio estático el riesgo es bajo: los requests los hace el **build**, no el
