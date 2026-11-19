@@ -731,6 +731,18 @@ de este diseño.
 route handlers para el webhook). `vinext` promete builds más rápidos y menos JS, pero estando en
 beta no se le pone encima el sitio de una clienta.
 
+> ⚠️ **Verificado en el paso 0.1 (19/11/2026): el CLI de Cloudflare ya NO genera Next.js.**
+> `pnpm create cloudflare@latest --framework=next` produce un proyecto **`vinext`**: sin
+> dependencia de `next`, con `vite dev` / `vite build` y `vinext-cloudflare deploy`.
+> **`vinext` no es Next.js**, es una reimplementación de su API sobre Vite.
+>
+> El usuario pidió **Next.js**, así que **no se usa ese scaffold**. El camino correcto es:
+> `create-next-app` + agregarle `@opennextjs/cloudflare` a mano. Es un paso más de setup y el
+> resultado es Next.js de verdad, en su versión estable.
+>
+> 📌 Si en el futuro se evalúa migrar a `vinext`, tener presente que **es un cambio de framework,
+> no de adaptador**.
+
 **Limitaciones del adaptador, a tener presentes en el paso 0.4:**
 - No soporta **Turbopack** para el build de producción.
 - No soporta el runtime `edge`: nada de `export const runtime = "edge"`.
