@@ -2,129 +2,206 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+/* ===========================================================================
+   SISTEMA DE DISENO — GALA ARQ
+   Tokens extraidos del Figma (pagina "High Fidelity"). Ver spec §4.
+   Esta es la UNICA fuente de tokens: no repetir valores en componentes.
+   =========================================================================== */
 
+/* El tracking del cuerpo baja en pantallas angostas (spec §5.5): el 0.16em
+   que hace respirar al desktop pica el texto en una linea de ~335px. */
+:root {
+  --tracking-body: 0.08em;
+}
+@media (width >= 40rem) {
+  :root {
+    --tracking-body: 0.16em;
+  }
+}
+
+@theme inline {
+  /* --- tipografias (spec §4.2) ------------------------------------------ */
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-brand: var(--font-josefin), ui-sans-serif, system-ui, sans-serif;
+
+  /* --- color (spec §4.4) ------------------------------------------------
+     Nombres propios para no chocar con los de shadcn (--color-muted ahi es
+     un fondo, no un color de texto). */
+  --color-ink: #1e1e1e;
+  --color-quiet: #6f7579;
+  --color-paper: #ffffff;
+
+  /* dots del carrusel: 5 colores que ciclan por posicion, dos estados */
+  --color-dot-1: #c9d1b9;
+  --color-dot-1-on: #819b4d;
+  --color-dot-2: #efdfd6;
+  --color-dot-2-on: #bb8c72;
+  --color-dot-3: #daebaf;
+  --color-dot-3-on: #a2c73e;
+  --color-dot-4: #cff1f1;
+  --color-dot-4-on: #5eb6b6;
+  --color-dot-5: #e8c6c2;
+  --color-dot-5-on: #bb6d65;
+
+  /* --- escala tipografica (spec §4.3) -----------------------------------
+     El line-height es menor que el font-size en varios roles. Es intencional
+     y es parte del look: no "corregirlo". */
+
+  /* titulo de obra en la ficha (h1) */
+  --text-display: 24px;
+  --text-display--line-height: 20px;
+  --text-display--letter-spacing: 0.16em;
+
+  /* titulo de card, ubicacion, anio, descripcion, creditos */
+  --text-body: 16px;
+  --text-body--line-height: 20px;
+  --text-body--letter-spacing: var(--tracking-body);
+
+  /* nav, breadcrumb, PREV/NEXT — siempre en mayuscula, nunca wrapean,
+     asi que mantienen el 0.16em tambien en mobile */
+  --text-label: 14px;
+  --text-label--line-height: 20px;
+  --text-label--letter-spacing: 0.16em;
+
+  /* switcher de idioma — sin tracking */
+  --text-ui: 14px;
+  --text-ui--line-height: 20px;
+
+  /* links sociales — sin tracking */
+  --text-social: 14px;
+  --text-social--line-height: 16px;
+
+  /* anio en la card */
+  --text-meta: 10px;
+  --text-meta--line-height: 14px;
+  --text-meta--letter-spacing: 0.16em;
+
+  /* footer — sin tracking */
+  --text-fine: 10px;
+  --text-fine--line-height: 14px;
+
+  /* logo */
+  --text-brand: 16px;
+  --text-brand--line-height: normal;
+
+  /* --- tracking suelto --------------------------------------------------- */
+  --tracking-brand: 0.16em;
+  --tracking-brand-sm: 0.08em;
+
+  /* --- movimiento (spec §4.6) -------------------------------------------- */
+  --ease-site: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 200ms;
+  --duration-base: 320ms;
+  --duration-slow: 480ms;
+}
+
+/* --- layout (spec §4.5) ---------------------------------------------------
+   Medidas del Figma a 1366px. El responsive es propuesta nuestra (spec §5.5).
+   Se consumen en el paso 0.3. */
+:root {
+  --page-max: 1238px;
+  --page-gutter: 20px;
+  --header-h: 56px;
+  --header-gap: 32px;
+  --footer-h: 48px;
+
+  --col-sidebar: 177px;
+  --col-sidebar-home: 90px;
+  --col-text: 288px;
+  --col-media: 629px;
+  --col-gap: 72px;
+
+  --cell: 204px;
+  --cell-gap: 8px;
+}
+@media (width >= 64rem) {
+  :root {
+    --page-gutter: 64px;
+    --header-h: 80px;
+    --header-gap: 64px;
+  }
+}
+
+/* ===========================================================================
+   SHADCN — se mantiene su contrato de variables para que sus componentes
+   (dialog, sheet) funcionen, pero apuntando a NUESTRA paleta.
+   Sin modo oscuro: el diseno no lo tiene (spec §4.4).
+   =========================================================================== */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: var(--radius);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --card: var(--color-paper);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-paper);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-ink);
+  --primary-foreground: var(--color-paper);
+  --secondary: #f4f5f5;
+  --secondary-foreground: var(--color-ink);
+  --muted: #f4f5f5;
+  --muted-foreground: var(--color-quiet);
+  --accent: #f4f5f5;
+  --accent-foreground: var(--color-ink);
+  --destructive: #bb6d65;
+  --border: #e4e6e7;
+  --input: #e4e6e7;
+  --ring: var(--color-quiet);
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* el diseno no tiene esquinas redondeadas (spec §4.7) */
+  --radius: 0px;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    /* spec §4.2: TODO el sitio es Manrope Light. El 300 es el peso por
+       defecto, no una excepcion. El 200 aparece una sola vez (idioma
+       inactivo) y el 500 solo en el logo, que usa Josefin Sans. */
+    font-weight: 300;
+  }
+  body {
+    @apply bg-paper text-ink;
+  }
+
+  /* spec §4.6: con la preferencia activa, las duraciones van a cero.
+     No es opcional. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }

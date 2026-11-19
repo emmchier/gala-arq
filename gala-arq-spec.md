@@ -25,24 +25,25 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `0.2` — Tokens del Figma
+> ### Paso `0.3` — Layout base
 >
-> **Estado:** no empezado. El paso `0.1` quedó ✅ el 19/11/2026.
+> **Estado:** no empezado. Los pasos `0.1` y `0.2` quedaron ✅ el 19/11/2026.
 >
-> **Qué hay que hacer:** bajar §4 a `@theme` en `src/app/globals.css` — colores (§4.4), escala
-> tipográfica con su tracking (§4.3), espaciado y grilla (§4.5) y los tokens de movimiento
-> (§4.6). Cargar **Manrope** y **Josefin Sans** por `next/font/google` y sacar Geist, que lo dejó
-> `create-next-app`.
+> **Qué hay que hacer:** construir el cascarón de §5.1 con contenido hardcodeado:
+> `SiteHeader`, `SiteFooter`, `PageContainer`, `Sidebar` (variantes nav y breadcrumb) y la
+> **grilla de 3 columnas** de §4.5. Desktop y mobile (§5.5).
 >
-> **Ojo:** `shadcn init` escribió su propio bloque de variables en `globals.css` (paleta `neutral`,
-> sidebar, charts). **Hay que reemplazarlo por el nuestro, no convivir con los dos.**
+> Los tokens ya están: usar `text-display`, `text-body`, `text-label`, `text-ui`, `text-social`,
+> `text-meta`, `text-fine`, `text-brand`, `text-ink`, `text-quiet`, `bg-paper` y las variables de
+> layout `--col-sidebar`, `--col-text`, `--col-media`, `--col-gap`, `--cell`, `--cell-gap`.
+> **No hardcodear ningún valor que ya sea token.**
 >
-> **No depende de nada externo.**
+> **Referencia viva:** `/tokens` muestra toda la escala renderizada.
 >
-> **Criterio de terminado:** una página de prueba muestra los estilos de texto de §4.3 iguales al
-> Figma, y `pnpm build` pasa.
+> **Criterio de terminado:** el header y el footer coinciden con el Figma a 1366px, y `pnpm build`
+> pasa.
 >
-> **Cuando termine:** marcar `0.2` ✅ en §1.9 y mover este bloque a `0.3`.
+> **Cuando termine:** marcar `0.3` ✅ en §1.9 y mover este bloque a `0.4`.
 
 ## Lo que ya está resuelto
 
@@ -189,8 +190,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | | Paso | Estado |
 |---|---|---|
 | **Fase 0** | 0.1 Scaffold | ✅ 19/11/2026 |
-| | 0.2 Tokens del Figma | 🔴 **NEXT** |
-| | 0.3 Layout base | ⬜ |
+| | 0.2 Tokens del Figma | ✅ 19/11/2026 |
+| | 0.3 Layout base | 🔴 **NEXT** |
 | | 0.4 Primer deploy | ⬜ |
 | **Fase 1** | 1.1 Proyecto de Sanity + Studio | ⬜ |
 | | 1.2 Schemas | ⬜ |
