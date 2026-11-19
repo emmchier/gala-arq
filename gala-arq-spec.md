@@ -220,9 +220,9 @@ Referencias: 🔴 next · 🟡 en curso · ✅ hecho · ⬜ pendiente
 | **Figma** | **https://www.figma.com/design/emDsp7Xtbz8TVk8TU7suuC/Gala-Arq** |
 | `fileKey` de Figma | `emDsp7Xtbz8TVk8TU7suuC` |
 | Página de Figma a usar | **`High Fidelity`** (`33:4819`) — ver §4.1 |
-| Proyecto de Sanity | creándose — anotar `projectId` acá |
+| Proyecto de Sanity | ✅ **Gala Arq** · `projectId` = **`3ibcmrqh`** |
 | Organización de Sanity | ⬜ pendiente: se crea y se le adjunta el proyecto (§16.5) |
-| Dataset de trabajo | `development` (se crea en el paso 1.1) |
+| Dataset de trabajo | `development` (se crea en el paso 1.1). `production` ya existe y queda vacío hasta la fase 3 |
 | Cuenta de Cloudflare | ✅ creada. ⚠️ El `account_id` **no se commitea** (repo público): va en `CLOUDFLARE_ACCOUNT_ID` |
 | Hosting | Cloudflare Workers — Worker no creado todavía |
 | Dominio | a definir (§17.4) |
@@ -1045,7 +1045,9 @@ El dashboard es el **Studio de Sanity**, embebido en `/studio`.
 ## 12.1 Login y permisos — no se programa
 
 - El acceso lo resuelve Sanity: Gala se invita como miembro del proyecto por email.
-- Rol recomendado: **Editor**. Crea, edita y publica contenido; no toca facturación ni miembros.
+- ⚠️ **Rol: `administrator`.** El `editor` **no sirve en el plan Free**: al terminar el trial los
+  roles no-administrador se convierten en `viewer` y Gala no podría editar (§17.0). Como además
+  ella va a terminar siendo la dueña (§16.5), administrador es el rol correcto de todos modos.
 - El Studio no muestra nada sin sesión válida. **No hay auth propia, ni sesiones, ni tabla de
   usuarios, ni gate que mantener.**
 - Activar **2FA** en la cuenta de Gala.
@@ -1250,6 +1252,25 @@ orden de **US$15/año** con impuestos.
 | Cloudflare Workers (hosting) | **$0** en el plan Free |
 | Acceso de Gala al dashboard | **$0** — el Free incluye 20 asientos |
 | **Dominio** | **único costo recurrente** |
+
+## 17.0 ⚠️ El trial de 30 días y qué pasa cuando termina
+
+Los proyectos nuevos arrancan con un **trial de Growth de 30 días**. Al vencer:
+
+- **Si no se carga tarjeta, pasa solo al plan Free. No se cobra nada.** No hay que hacer nada
+  para evitar el cobro.
+- El trial **tiene las mismas cuotas que el Free**, así que no hay sorpresa de uso al bajar.
+
+**Dos efectos del downgrade que sí importan:**
+
+1. ⚠️ **Los miembros con roles distintos de administrador pasan a ser `viewer`.** En el plan Free
+   los roles granulares no existen. **Consecuencia directa para nosotros: para que Gala pueda
+   editar, tiene que ser `administrator`, no `editor`** (§12.1).
+2. ⚠️ **Los datasets privados se vuelven públicos, y eso no se revierte.** Volver a Growth
+   devuelve la *funcionalidad* de datasets privados, pero **no la visibilidad anterior**: hay que
+   volver a marcarlos privados a mano. Para este proyecto es indistinto porque los datasets van a
+   ser públicos igual, pero **no conviene marcar nada privado durante el trial** creyendo que se
+   queda así.
 
 ## 17.1 Sanity — plan Free
 
