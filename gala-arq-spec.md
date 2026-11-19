@@ -25,22 +25,26 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `1.5` — Ficha `/trabajos/[slug]`
+> ### Paso `1.6` — El carrusel de la Home
 >
-> **Estado:** no empezado. El `1.4` quedó ✅ el 19/11/2026.
+> **Estado:** no empezado. El `1.5` quedó ✅ el 19/11/2026. **Es la última pantalla de la fase 1.**
 >
-> 🚧 **Antes de empezar hay que cerrar una decisión:** el Figma tiene dos variantes de ficha y el
-> spec tiene elegida la **07** (cuadrícula compacta), pero el usuario mandó la **06** (imagen
-> grande, contador `1/48`, tira de miniaturas) al explicar la grilla. **Preguntar cuál va.**
-> Cambia el componente de galería entero, no el schema.
+> **Qué hay que hacer:** el carrusel automático de §5.2. Es el **único componente con estado de
+> cliente de todo el sitio**, y por eso va último.
 >
-> **Qué hay que hacer:** la ruta dinámica con `generateStaticParams` (ya está
-> `TRABAJOS_SLUGS_QUERY`), la columna de texto con título, ubicación, año, descripción en
-> Portable Text y créditos, la galería, y `PREV · NEXT` con `TRABAJO_VECINOS_QUERY`.
+> 1. Avanza solo, con las **barras de progreso** de §4.4 marcando el tiempo: riel gris, el color
+>    saturado cargando encima, una barra por destacado (hasta 12, color por `i % 5`).
+> 2. Se adelanta **tocando o swipeando la imagen**, además del botón y las flechas del teclado.
+> 3. Estado en **Zustand** (§7.3), no en Sanity.
 >
-> **Criterio de terminado:** una obra real renderiza completa con su galería, y `pnpm build` pasa.
+> ⚠️ **Lo que no se puede olvidar, porque avanza solo:** pausa al **hover** y al **foco**, respetar
+> **`prefers-reduced-motion`** (§4.6), y barras como `button` con `aria-label`. Un carrusel que se
+> mueve solo y no se puede parar es una barrera real.
 >
-> **Cuando termine:** marcar `1.5` ✅ en §1.9 y mover este bloque a `1.6`.
+> **Criterio de terminado:** el carrusel corre solo, se adelanta al tocar y al swipear, las barras
+> cargan, se pausa al hover y `pnpm build` pasa.
+>
+> **Cuando termine:** marcar `1.6` ✅ en §1.9 y mover este bloque a `2.1`. **Cierra la fase 1.**
 
 ## Lo que ya está resuelto
 
@@ -194,8 +198,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | | 1.2 Schemas | ✅ 19/11/2026 |
 | | 1.3 Queries + typegen | ✅ 19/11/2026 |
 | | 1.4 Listado | ✅ 19/11/2026 |
-| | 1.5 Ficha | 🔴 **NEXT** |
-| | 1.6 Home | ⬜ |
+| | 1.5 Ficha | ✅ 19/11/2026 |
+| | 1.6 Home | 🔴 **NEXT** |
 | **Fase 2** | 2.1 i18n en Sanity | ⬜ |
 | | 2.2 i18n en Next | ⬜ |
 | | 2.3 Switcher + hreflang | ⬜ |
