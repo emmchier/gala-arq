@@ -441,6 +441,54 @@ Reglas:
 
 ---
 
+## 4.8 Los tokens en código — ✅ implementado en el paso 0.2
+
+Viven en **`src/app/globals.css`**, una sola vez. Hay una **referencia viva renderizada en
+`/tokens`**: esa página es la forma de verificar contra el Figma, y se actualiza sola porque usa
+los tokens reales.
+
+**Nombres en código.** Difieren del spec en dos casos, para no chocar con shadcn, que ya usa
+`muted` como color de fondo:
+
+| Spec | En código |
+|---|---|
+| `ink` | `text-ink` / `bg-ink` |
+| `muted` | **`text-quiet`** |
+| `bg` | **`bg-paper`** |
+
+**Escala:** `text-display` (24) · `text-body` (16) · `text-label` (14, mayúsculas) ·
+`text-ui` (14, sin tracking) · `text-social` (14/16) · `text-meta` (10) · `text-fine` (10, sin
+tracking) · `text-brand` (16, Josefin Sans).
+
+**Movimiento:** `duration-fast` / `duration-base` / `duration-slow` + `ease-site`.
+
+**Layout:** variables en `:root` — `--page-max`, `--page-gutter`, `--header-h`, `--header-gap`,
+`--footer-h`, `--col-sidebar`, `--col-sidebar-home`, `--col-text`, `--col-media`, `--col-gap`,
+`--cell`, `--cell-gap`. Cambian solas en el breakpoint.
+
+### Tres cosas que hay que saber antes de escribir componentes
+
+1. **El peso 300 es el default del `html`.** No hace falta ponerlo en cada componente, y si ves
+   un `font-light` suelto por ahí, sobra.
+2. **El tracking del cuerpo es automático.** `text-body` ya baja a `0.08em` abajo de `640px` y
+   vuelve a `0.16em` arriba. No hay que pensarlo por componente.
+3. ⚠️ **Los colores de los dots se consumen como utilidades** (`bg-dot-1` … `bg-dot-5-on`),
+   eligiendo de una **lista literal de clases** por índice:
+   ```ts
+   const DOTS = ["bg-dot-1", "bg-dot-2", "bg-dot-3", "bg-dot-4", "bg-dot-5"] as const;
+   const clase = DOTS[i % DOTS.length];
+   ```
+   **No sirve `var(--color-dot-N)` en runtime:** el bloque es `@theme inline` y no emite las
+   variables como custom properties. Es el bug que apareció al construir `/tokens`.
+
+### shadcn
+
+Se mantiene su contrato de variables para que `dialog` y `sheet` funcionen, pero **apuntando a
+nuestra paleta**, con `--radius: 0px` (el diseño no tiene esquinas redondeadas) y **sin modo
+oscuro**.
+
+---
+
 # §5. Las pantallas
 
 ## 5.1 Elementos comunes a las tres
