@@ -1,23 +1,37 @@
-.DS_Store
-node_modules/
+# dependencias
+/node_modules
+.pnp
+.pnp.*
+
+# next
+/.next/
+/out/
+/build
+next-env.d.ts
+*.tsbuildinfo
+
+# cloudflare / opennext
+/.open-next/
+/.wrangler/
+.dev.vars
+.dev.vars.*
 
 # entorno — nunca commitear secretos (tokens de Sanity, credenciales de Cloudflare)
 .env
 .env*.local
 
-# next
-.next/
-out/
-next-env.d.ts
-
-# cloudflare / opennext
-.open-next/
-.wrangler/
-
 # sanity
-dist/
+/dist
+
+# testing
+/coverage
+
+# varios
+.DS_Store
+*.pem
 
 # logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
+.pnpm-debug.log*

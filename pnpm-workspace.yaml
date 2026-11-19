@@ -1,0 +1,7 @@
+allowBuilds:
+  # binarios que necesita el adaptador de Cloudflare
+  esbuild: true
+  workerd: true
+  # no hacen falta
+  sharp: false
+  unrs-resolver: false

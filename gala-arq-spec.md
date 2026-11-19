@@ -25,19 +25,24 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `0.1` — Scaffold del proyecto
+> ### Paso `0.2` — Tokens del Figma
 >
-> **Estado:** no empezado. **Nada de código todavía en el repo.**
+> **Estado:** no empezado. El paso `0.1` quedó ✅ el 19/11/2026.
 >
-> **Qué hay que hacer:** crear el proyecto Next.js con el adaptador de Cloudflare, sumarle
-> shadcn/ui y dejar el repo compilando y corriendo en local. Detalle completo en §1.2.
+> **Qué hay que hacer:** bajar §4 a `@theme` en `src/app/globals.css` — colores (§4.4), escala
+> tipográfica con su tracking (§4.3), espaciado y grilla (§4.5) y los tokens de movimiento
+> (§4.6). Cargar **Manrope** y **Josefin Sans** por `next/font/google` y sacar Geist, que lo dejó
+> `create-next-app`.
 >
-> **Antes de arrancar, el usuario tiene que haber hecho:**
-> - [ ] Nada. Este paso no depende de ninguna cuenta ni de ningún servicio externo.
+> **Ojo:** `shadcn init` escribió su propio bloque de variables en `globals.css` (paleta `neutral`,
+> sidebar, charts). **Hay que reemplazarlo por el nuestro, no convivir con los dos.**
 >
-> **Criterio de terminado:** `pnpm dev` levanta, `pnpm build` pasa, y el commit está pusheado.
+> **No depende de nada externo.**
 >
-> **Cuando termine:** marcar `0.1` ✅ en §1.7 y mover este bloque a `0.2`.
+> **Criterio de terminado:** una página de prueba muestra los estilos de texto de §4.3 iguales al
+> Figma, y `pnpm build` pasa.
+>
+> **Cuando termine:** marcar `0.2` ✅ en §1.9 y mover este bloque a `0.3`.
 
 ## Lo que ya está resuelto
 
@@ -183,8 +188,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 
 | | Paso | Estado |
 |---|---|---|
-| **Fase 0** | 0.1 Scaffold | 🔴 **NEXT** |
-| | 0.2 Tokens del Figma | ⬜ |
+| **Fase 0** | 0.1 Scaffold | ✅ 19/11/2026 |
+| | 0.2 Tokens del Figma | 🔴 **NEXT** |
 | | 0.3 Layout base | ⬜ |
 | | 0.4 Primer deploy | ⬜ |
 | **Fase 1** | 1.1 Proyecto de Sanity + Studio | ⬜ |
@@ -221,7 +226,8 @@ Referencias: 🔴 next · 🟡 en curso · ✅ hecho · ⬜ pendiente
 | `fileKey` de Figma | `emDsp7Xtbz8TVk8TU7suuC` |
 | Página de Figma a usar | **`High Fidelity`** (`33:4819`) — ver §4.1 |
 | Proyecto de Sanity | ✅ **Gala Arq** · `projectId` = **`3ibcmrqh`** |
-| Organización de Sanity | `Gala Arq` — pendiente de crear y adjuntar (§16.5) |
+| Organización de Sanity | ✅ **`Gala Arq`** = `ozejyyn9m`. El proyecto ya está transferido a ella (19/11/2026) |
+| Código | ✅ paso 0.1: Next 16.4.6 + React 19.3 + Tailwind 4.3 + TS 5.9 + shadcn (radix/nova) + Zustand 5.1 + OpenNext 1.20.17 |
 | Dataset de trabajo | `development` (se crea en el paso 1.1). `production` ya existe y queda vacío hasta la fase 3 |
 | Cuenta de Cloudflare | ✅ creada. ⚠️ El `account_id` **no se commitea** (repo público): va en `CLOUDFLARE_ACCOUNT_ID` |
 | Hosting | Cloudflare Workers — Worker no creado todavía |
@@ -744,10 +750,14 @@ beta no se le pone encima el sitio de una clienta.
 > no de adaptador**.
 
 **Limitaciones del adaptador, a tener presentes en el paso 0.4:**
-- No soporta **Turbopack** para el build de producción.
+- ~~No soporta Turbopack para el build de producción.~~ ✅ **Verificado el 19/11/2026: sí lo
+  soporta.** Next 16 buildea con Turbopack por defecto y `opennextjs-cloudflare build` lo procesa
+  sin problemas. El dato de que no lo soportaba quedó viejo.
 - No soporta el runtime `edge`: nada de `export const runtime = "edge"`.
 - Hace falta el service binding **`WORKER_SELF_REFERENCE`**. Si falta: **500 en `workers.dev`**.
-- El cache de ISR necesita un **KV namespace** en `wrangler`.
+- El cache de ISR usa **R2**, no KV: es lo que trae la plantilla oficial del adaptador. Hay que
+  **crear el bucket antes del primer deploy**:
+  `pnpm wrangler r2 bucket create gala-arq-dev-opennext-cache`.
 
 ## 6.5 Entornos: develop y production
 
@@ -1377,6 +1387,7 @@ proyecto necesita**:
 | Webhooks GROQ | **2** | 1: el de revalidación | ✅ |
 | Roles | **2: `administrator` y `viewer`** | Gala como `administrator` | ✅ |
 | Atributos únicos por dataset | **2.000** | los 3 schemas no llegan a 60 | ✅ |
+| Requests a la API CDN | **1.000.000 / mes** | | ✅ |
 | Requests a la API | **250.000 / mes** | las hace el **build**, no el visitante | ✅ |
 | Bandwidth | 100 GB / mes | | ✅ |
 | Assets | 100 GB | | ✅ |

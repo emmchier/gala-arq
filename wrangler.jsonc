@@ -1,0 +1,38 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+
+  // Entorno de desarrollo (spec §6.5). El de produccion se agrega en la fase 3
+  // como "env.production", con su propio nombre y dominio.
+  "name": "gala-arq-dev",
+  "compatibility_date": "2026-11-19",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  // Sin este binding el Worker responde 500 en workers.dev (spec §13.2).
+  // El "service" tiene que coincidir exactamente con "name".
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "gala-arq-dev"
+    }
+  ],
+
+  // Cache incremental de ISR. Crear el bucket antes del primer deploy:
+  //   pnpm wrangler r2 bucket create gala-arq-dev-opennext-cache
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "gala-arq-dev-opennext-cache"
+    }
+  ],
+
+  // Optimizacion de imagenes de Cloudflare.
+  "images": {
+    "binding": "IMAGES"
+  }
+}
