@@ -559,8 +559,11 @@ oscuro**.
 Cambia según la pantalla:
 - **Home:** `nav.navbar` con los 4 links (`TRABAJOS`, `ESTUDIO`, `NOTICIAS`, `CONTACTO`) arriba, y
   `nav.social-links` (`Instagram`, `Behance`) **abajo del todo**, alineado al pie del main.
-- **Listado y Ficha:** `nav.breadcrumb` arriba (`← VOLVER / TRABAJOS`). En la Ficha, además,
+- **Listado y Ficha:** `nav.breadcrumb` arriba (**`← TRABAJOS`**). En la Ficha, además,
   `nav.project-pagination` (`PREV · NEXT`) **abajo del todo**.
+
+> 📌 **El breadcrumb es solo la flecha y el destino**, sin la palabra "Volver" que tenía el Figma:
+> la flecha ya lo dice (decisión del usuario, 19/11/2026).
 
 > **La navegación principal solo está en la Home.** En Listado y Ficha, el sidebar lo ocupa el
 > breadcrumb. Es una decisión fuerte del diseño: se navega volviendo, no saltando.
@@ -623,7 +626,7 @@ y no se puede detener es una barrera real, no un detalle.
 ```
 ┌─ header ─────────────────────────────────────────────────────────────┐
 │                                                                      │
-│  ← VOLVER / TRABAJOS   [heading]   ┌─────┐ ┌─────┐ ┌─────┐           │
+│  ← TRABAJOS            [heading]   ┌─────┐ ┌─────┐ ┌─────┐           │
 │                                    │ img │ │ img │ │ img │           │
 │                                    └─────┘ └─────┘ └─────┘           │
 │                                    Casa Elen  Casa Elen  Casa Elen   │
@@ -660,8 +663,8 @@ accesibilidad conviene que tenga un `h1`, aunque sea visualmente oculto.
 ```
 ┌─ header ─────────────────────────────────────────────────────────────┐
 │                                                                      │
-│  ← VOLVER /      Casa Elen          ┌─────┐ ┌─────┐ ┌─────┐          │
-│    TRABAJOS      City Bell          │ img │ │ img │ │ img │          │
+│  ← TRABAJOS      Casa Elen          ┌─────┐ ┌─────┐ ┌─────┐          │
+│                  City Bell          │ img │ │ img │ │ img │          │
 │                  2026               └─────┘ └─────┘ └─────┘          │
 │                                     ┌─────┐ ┌─────┐ ┌─────┐          │
 │                  Located in the     │ img │ │ img │ │ img │          │
