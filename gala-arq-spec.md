@@ -25,24 +25,30 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `3.1` — Webhook de revalidación
+> ### Paso `3.1` (cerrar) y `3.2` — SEO
 >
-> **Estado:** no empezado. **La fase 2 está cerrada:** los pasos `2.2` y `2.3` salieron juntos.
+> **Falta un paso manual del usuario para cerrar el `3.1`:** crear el webhook en Sanity.
+> El endpoint ya está desplegado y verificado; lo único que falta es que Sanity lo llame.
 >
-> **Qué hay que hacer:** que Gala publique en el Studio y el sitio se actualice sin rebuild.
-> 1. Route handler en `/api/revalidate` que valide la firma del webhook y llame `revalidateTag`.
-> 2. Secreto compartido en `.env.local` y en los secrets del Worker: **nunca en el repo** (§13.11).
-> 3. Webhook en Sanity apuntando a la URL de `workers.dev`, disparando en `trabajo` y
->    `configuracion`.
+> **Cómo crearlo** — `pnpm sanity hooks create` (es interactivo, no acepta flags) o el panel:
 >
-> **Las etiquetas ya están puestas:** `sanityFetch` obliga a etiquetar cada lectura, y los tags
-> son `trabajo` y `configuracion` (§7.1).
+> | Campo | Valor |
+> |---|---|
+> | Nombre | `Revalidar sitio` |
+> | URL | `https://gala-arq-dev.gala-arq.workers.dev/api/revalidate` |
+> | Dataset | `development` |
+> | Dispara en | Create, Update, Delete |
+> | Filtro | `_type in ["trabajo","configuracion","translation.metadata"]` |
+> | Proyección | `{_type, _id}` |
+> | Método | `POST` |
+> | Secreto | el de `.env.local` → `grep SANITY_REVALIDATE_SECRET .env.local` |
 >
-> ⚠️ **El plan free de Sanity da 2 webhooks** (§17.1). Alcanza, pero no sobra.
+> **Después, el `3.2`:** `sitemap.ts` y `robots.ts` generados desde Sanity, con las dos versiones
+> de idioma. El `hreflang` y el Open Graph **ya están** (paso 2.3).
 >
-> **Criterio de terminado:** Gala publica un cambio y el sitio lo muestra en segundos.
+> ⚠️ **El sitemap tiene que excluir `/studio`** (§10).
 >
-> **Cuando termine:** marcar `3.1` ✅ en §1.9 y mover este bloque a `3.2`.
+> **Cuando termine:** marcar `3.1` y `3.2` ✅ en §1.9 y mover este bloque a `3.3`.
 
 ## Lo que ya está resuelto
 
@@ -201,8 +207,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | **Fase 2** | 2.1 i18n en Sanity | ✅ 20/11/2026 |
 | | 2.2 i18n en Next | ✅ 20/11/2026 |
 | | 2.3 Switcher + hreflang | ✅ 20/11/2026 |
-| **Fase 3** | 3.1 Webhook de revalidación | 🔴 **NEXT** |
-| | 3.2 SEO | ⬜ |
+| **Fase 3** | 3.1 Webhook de revalidación | 🟡 falta crear el webhook en Sanity |
+| | 3.2 SEO | 🔴 **NEXT** |
 | | 3.3 Entorno de producción | ⬜ |
 | | 3.4 Accesibilidad y performance | ⬜ |
 | | 3.5 Dominio | ⬜ |
@@ -1053,6 +1059,23 @@ Un portfolio es contenido que cambia poco y se lee mucho. Entonces:
   llama `revalidateTag()`. Gala publica y el sitio se actualiza en segundos, sin rebuild manual y
   sin pagar cómputo por visita.
 - Las queries se etiquetan con `next: { tags: [...] }` para invalidar por tipo de documento.
+
+> ✅ **Endpoint implementado en el paso 3.1:** `src/app/api/revalidate/route.ts`. Valida la firma
+> del webhook con el secreto compartido y llama `revalidateTag`.
+>
+> ⚠️ **En Next 16 `revalidateTag` cambió de firma:** pide un perfil de caché como segundo
+> argumento. Se usa `{ expire: 0 }`, expiración inmediata, que es lo que corresponde a un webhook
+> de publicación: Gala publica y el contenido viejo deja de servirse ya, no después de una
+> ventana de gracia.
+>
+> 📌 **Un cambio en `translation.metadata` revalida `trabajo`**, porque mueve el switcher de
+> idioma, que vive dentro de esas páginas.
+>
+> 📌 **Es el único endpoint del sitio que invoca al Worker en runtime.** Todo lo demás se sirve
+> como static assets.
+>
+> Verificado: firma válida → 200 y revalida; firma inválida o ausente → **401**, en local y en
+> producción.
 - **Nada de `force-dynamic`** en páginas públicas.
 
 **Consecuencia económica:** las visitas pegan a **static assets**, que en Cloudflare son gratis e
