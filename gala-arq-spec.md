@@ -1179,6 +1179,25 @@ Arrancar con A, y decidir cuando se diseñe la pantalla de Contacto.
 | `portada`, `galeria`, `anio`, `color`, `orderRank` | **no** — son los mismos en los dos idiomas |
 | Textos de interfaz (`TRABAJOS`, `VOLVER`, `PREV`...) | **sí**, pero viven en el código, no en Sanity |
 
+## 9.1.b ✅ Implementado en el paso 2.1
+
+| | |
+|---|---|
+| Idiomas | `es` (base, sin prefijo) y `en` |
+| Lista única | `src/sanity/i18n.ts` — la usan los dos plugins y, desde 2.2, el routing |
+| Campo de idioma en `trabajo` | `idioma`, oculto: lo gestiona el plugin |
+
+⚠️ **El paquete field-level se llama `sanity-plugin-internationalized-array`**, no
+`@sanity/internationalized-array` como decía antes este spec. Ese nombre **no existe en npm**.
+
+⚠️ **Todas las queries de `trabajo` filtran por `$idioma`.** Con traducción por documento, la
+versión ES y la EN son documentos distintos: sin el filtro, el listado mostraría cada trabajo dos
+veces. Los vecinos de `PREV`/`NEXT` también se limitan al mismo idioma.
+
+⚠️ **Los slugs son distintos por idioma.** Verificado con la traducción de prueba:
+`casa-elen` (ES) ↔ `elen-house` (EN). El routing del paso 2.2 **no puede asumir el mismo slug**
+en los dos idiomas.
+
 ## 9.2 En Sanity: enfoque híbrido
 
 Sanity tiene dos estrategias y **la recomendación oficial depende del tipo de contenido**:
