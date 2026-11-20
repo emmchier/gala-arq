@@ -1217,6 +1217,43 @@ de tener slugs y publicación por idioma. Si se vuelve molesto, la alternativa e
 `galeria`/`portada` a un documento base compartido y referenciarlo (más schema, menos fricción
 editorial). **No lo hagamos de entrada: resolvamos el problema si aparece.**
 
+## 9.2.b ✅ Implementado en los pasos 2.2 y 2.3
+
+**Rutas traducidas, sin middleware:**
+
+| Español | Inglés |
+|---|---|
+| `/` | `/en` |
+| `/trabajos` | `/en/works` |
+| `/trabajos/casa-elen` | `/en/works/elen-house` |
+| `/estudio` · `/noticias` · `/contacto` | `/en/studio` · `/en/news` · `/en/contact` |
+
+> 📌 **Por qué sin middleware, que es la decisión de fondo.** Lo habitual es `next-intl` con
+> `localePrefix: 'as-needed'`, pero eso **necesita middleware, y el middleware hace que cada
+> visita invoque el Worker**. Hoy las visitas pegan a static assets, que en Cloudflare son gratis
+> e ilimitados (§7.1, §17.2). Las rutas se declaran a mano, **una carpeta por idioma**, y todo
+> sigue siendo estático.
+
+**Un layout raíz por idioma**, con route groups `(es)`, `(en)` y `(studio)`. Así el `<html lang>`
+es el correcto sin middleware. Verificado: `lang="es"` y `lang="en"`.
+
+| Archivo | Qué |
+|---|---|
+| `src/sanity/i18n.ts` | la lista de idiomas, única |
+| `src/lib/routes.ts` | el mapa de segmentos traducidos |
+| `src/lib/mensajes.ts` | los textos de interfaz (§9.4) |
+| `src/components/pages/` | las pantallas, compartidas por los dos idiomas |
+| `src/app/(es)/`, `src/app/(en)/` | archivos finos que solo pasan el idioma |
+
+**El switcher resuelve el slug equivalente.** Verificado:
+
+| Caso | Resultado |
+|---|---|
+| `casa-elen`, que tiene traducción | linkea a `/en/works/elen-house` |
+| `casa-patio`, que no la tiene | el idioma queda `aria-disabled`, no lleva a un 404 |
+
+`hreflang` recíproco más `x-default` apuntando a español.
+
 ## 9.3 En Next: routing
 
 - **`es` es el idioma por defecto y va sin prefijo.** `en` va prefijado.
