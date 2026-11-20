@@ -25,26 +25,25 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `1.6` — El carrusel de la Home
+> ### Paso `2.1` — i18n en Sanity
 >
-> **Estado:** no empezado. El `1.5` quedó ✅ el 19/11/2026. **Es la última pantalla de la fase 1.**
+> **Estado:** no empezado. **✅ La fase 1 está cerrada:** el portfolio anda en español, con las
+> tres pantallas sobre datos reales.
 >
-> **Qué hay que hacer:** el carrusel automático de §5.2. Es el **único componente con estado de
-> cliente de todo el sitio**, y por eso va último.
+> **Qué hay que hacer:** el enfoque híbrido de §9.2.
+> 1. `@sanity/document-internationalization` para **`trabajo`**: tiene URL propia y Portable
+>    Text, así que va **document-level**.
+> 2. `@sanity/internationalized-array` para **`configuracion`**: son strings cortos sin URL, así
+>    que va **field-level**.
+> 3. Idiomas: `es` (base) y `en`.
 >
-> 1. Avanza solo, con las **barras de progreso** de §4.4 marcando el tiempo: riel gris, el color
->    saturado cargando encima, una barra por destacado (hasta 12, color por `i % 5`).
-> 2. Se adelanta **tocando o swipeando la imagen**, además del botón y las flechas del teclado.
-> 3. Estado en **Zustand** (§7.3), no en Sanity.
+> ⚠️ **Avisarle a Gala antes de que cargue obra real:** con document-level, agregar una foto
+> después obliga a agregarla **en los dos idiomas** (§9.2). Es el precio de tener slugs y
+> publicación por idioma.
 >
-> ⚠️ **Lo que no se puede olvidar, porque avanza solo:** pausa al **hover** y al **foco**, respetar
-> **`prefers-reduced-motion`** (§4.6), y barras como `button` con `aria-label`. Un carrusel que se
-> mueve solo y no se puede parar es una barrera real.
+> **Criterio de terminado:** se puede crear la versión EN de un trabajo desde el Studio.
 >
-> **Criterio de terminado:** el carrusel corre solo, se adelanta al tocar y al swipear, las barras
-> cargan, se pausa al hover y `pnpm build` pasa.
->
-> **Cuando termine:** marcar `1.6` ✅ en §1.9 y mover este bloque a `2.1`. **Cierra la fase 1.**
+> **Cuando termine:** marcar `2.1` ✅ en §1.9 y mover este bloque a `2.2`.
 
 ## Lo que ya está resuelto
 
@@ -199,8 +198,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | | 1.3 Queries + typegen | ✅ 19/11/2026 |
 | | 1.4 Listado | ✅ 19/11/2026 |
 | | 1.5 Ficha | ✅ 19/11/2026 |
-| | 1.6 Home | 🔴 **NEXT** |
-| **Fase 2** | 2.1 i18n en Sanity | ⬜ |
+| | 1.6 Home | ✅ 20/11/2026 |
+| **Fase 2** | 2.1 i18n en Sanity | 🔴 **NEXT** |
 | | 2.2 i18n en Next | ⬜ |
 | | 2.3 Switcher + hreflang | ⬜ |
 | **Fase 3** | 3.1 Webhook de revalidación | ⬜ |
@@ -624,6 +623,12 @@ Cambia según la pantalla:
   esperado, no un error.
 - Teclado: flechas izquierda y derecha. Las barras son `button` con `aria-label`.
 - `priority` en la primera imagen; el resto lazy.
+- **Crossfade** entre diapositivas, no desplazamiento (§4.6).
+
+> 📌 **Se agregó un epígrafe con el nombre del trabajo debajo de la imagen**, que linkea a su
+> ficha. **No está en el Figma.** Hizo falta porque la imagen responde al tap avanzando, así que
+> sin el epígrafe **no hay forma de llegar al trabajo desde la Home**. A confirmar con el usuario:
+> si lo quiere afuera, hay que resolver el acceso de otra manera.
 
 Es el **único componente con estado de cliente de todo el sitio** (§7.3), y por eso se construye
 último en la fase 1.

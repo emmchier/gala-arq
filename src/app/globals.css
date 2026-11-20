@@ -91,6 +91,9 @@
   --tracking-brand: 0.16em;
   --tracking-brand-sm: 0.08em;
 
+  /* Cuanto dura cada diapositiva del carrusel de la Home (spec §5.2). */
+  --duration-slide: 5000ms;
+
   /* --- movimiento (spec §4.6) -------------------------------------------- */
   --ease-site: cubic-bezier(0.4, 0, 0.2, 1);
   --duration-fast: 200ms;
@@ -183,6 +186,17 @@
 
   /* el diseno no tiene esquinas redondeadas (spec §4.7) */
   --radius: 0px;
+}
+
+/* Relleno de las barras de progreso del carrusel (spec §4.4).
+   Se reinicia en cada diapositiva remontando el elemento con una `key`. */
+@keyframes carousel-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 @layer base {
