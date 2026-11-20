@@ -50,6 +50,65 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 >
 > **Cuando termine:** marcar `3.1` y `3.2` ✅ en §1.9 y mover este bloque a `3.3`.
 
+## Mapa del código
+
+Para orientarse rápido en una sesión nueva:
+
+| Dónde | Qué |
+|---|---|
+| `src/app/(es)/`, `src/app/(en)/` | **rutas**: archivos finos que solo pasan el idioma |
+| `src/app/(studio)/studio/` | el Studio de Sanity embebido |
+| `src/app/api/revalidate/` | el webhook de revalidación — **el único endpoint en runtime** |
+| `src/components/pages/` | **las pantallas**, compartidas por los dos idiomas |
+| `src/components/layout/` | header, footer, sidebar, breadcrumb, grilla, `PageFrame` |
+| `src/components/home/` | el carrusel |
+| `src/components/trabajo/` | descripción, créditos, PREV/NEXT |
+| `src/components/sanity-image.tsx` | imágenes, siempre con `sizes` explícito |
+| `src/sanity/queries/` | **GROQ, centralizado**. Nunca inline en componentes |
+| `src/sanity/schemas/` | `trabajo`, `configuracion`, objeto `credito` |
+| `src/sanity/i18n.ts` | la lista de idiomas, **única fuente** |
+| `src/sanity/types.ts` | **generado** por `pnpm typegen`. No editar a mano |
+| `src/lib/routes.ts` | el mapa de segmentos traducidos |
+| `src/lib/mensajes.ts` | los textos de interfaz |
+| `src/stores/carousel.ts` | el único store de Zustand |
+| `src/app/globals.css` | **todos los tokens**, una sola vez (§4.8) |
+
+## Comandos
+
+```bash
+pnpm dev          # desarrollo en localhost:3000
+pnpm build        # build de producción (TypeScript en strict)
+pnpm typegen      # regenera src/sanity/types.ts — correr tras tocar schemas o queries
+pnpm run preview  # el build de producción corriendo en workerd, como en Cloudflare
+pnpm run deploy   # publica a gala-arq-dev.gala-arq.workers.dev
+```
+
+**Contenido de prueba** (NDJSON en el scratchpad, regenerable):
+
+```bash
+pnpm sanity dataset import <archivo>.ndjson --dataset development --replace
+pnpm sanity assets upload --file assets/test-image.png --type image --dataset development
+pnpm sanity schema validate --workspace default
+```
+
+## Decisiones cerradas — no volver a discutirlas
+
+Están argumentadas en el spec; acá solo el resumen, para que una sesión nueva no las revisite:
+
+| Decisión | Dónde |
+|---|---|
+| **El contenido NO va a un store de cliente.** El navegador hace 0 requests a Sanity | §7.0 |
+| **Sin middleware.** Rompería que las visitas se sirvan como static assets | §9.2.b |
+| **Grilla fluida 20/30/50**, no los píxeles del Figma | §4.5 |
+| **Peso base 400**, no el Light 300 del Figma | §4.2 |
+| **Imágenes por loader propio**, no por el optimizador de Next | §18.2 |
+| **Cache de ISR en KV**, no en R2: R2 pide medio de pago | §6.4 |
+| **El tipo se llama `trabajo`**, no `proyecto` | §8.1 |
+| **Sin `categoria`, `color`, `publicado` ni `orden`** en el schema | §8.1 |
+| **i18n híbrido**: document-level para `trabajo`, field-level para `configuracion` | §9.2 |
+| **Zustand solo para estado de interfaz**, hoy solo el carrusel | §7.3 |
+| **La ficha es la variante 07** del Figma, de cuadrícula | §5.4 |
+
 ## Lo que ya está resuelto
 
 - **Diseño:** Figma leído y bajado a especificación. Sistema de diseño en §4, las tres pantallas
@@ -244,6 +303,8 @@ Referencias: 🔴 next · 🟡 en curso · ✅ hecho · ⬜ pendiente
 | Dominio | a definir (§17.4) |
 | Idiomas | **`es` (default) + `en`** (§9) |
 | Assets de prueba | `assets/test-image.png` — ver §18.5 |
+| Contenido cargado | 10 trabajos en `es` + 10 en `en` + 10 `translation.metadata` + `configuracion` |
+| Secreto del webhook | `SANITY_REVALIDATE_SECRET` en `.env.local` y en los secrets del Worker. **No está en el repo** |
 
 ---
 
