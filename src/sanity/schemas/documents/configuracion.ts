@@ -1,4 +1,4 @@
-import { defineArrayMember, defineField, defineType } from "sanity";
+import { defineField, defineType } from "sanity";
 
 /**
  * Datos del sitio, editables por Gala (spec §8.2).
@@ -6,8 +6,12 @@ import { defineArrayMember, defineField, defineType } from "sanity";
  * Es un SINGLETON: un solo documento con `_id` fijo "configuracion". Se fija
  * en la estructura y se saca de "crear nuevo" (ver sanity.config.ts).
  *
- * Todo lo que hoy esta hardcodeado en src/lib/site.ts sale de aca a partir
- * del paso 1.4. Nada de datos de Gala en el codigo (spec §16.4, regla 1).
+ * Nada de datos de Gala en el codigo (spec §16.4, regla 1).
+ *
+ * Traduccion FIELD-LEVEL (spec §9.2): la mayoria de los campos NO se traducen
+ * (mail, telefono, redes, direccion), asi que un documento por idioma los
+ * duplicaria y tarde o temprano se desincronizan. Solo los textos largos
+ * llevan una version por idioma, dentro del mismo documento.
  */
 export const configuracion = defineType({
   name: "configuracion",
@@ -26,12 +30,12 @@ export const configuracion = defineType({
       group: "estudio",
       validation: (rule) => rule.required(),
     }),
+    // Traducible: uno por idioma, en el mismo documento (spec §9.2).
     defineField({
       name: "textoEstudio",
       title: "Texto del estudio",
-      type: "array",
+      type: "internationalizedArrayText",
       group: "estudio",
-      of: [defineArrayMember({ type: "block", styles: [], lists: [] })],
     }),
     defineField({
       name: "retrato",
@@ -87,12 +91,12 @@ export const configuracion = defineType({
       group: "contacto",
     }),
 
+    // Traducible.
     defineField({
       name: "textoLegal",
       title: "Texto legal",
-      type: "array",
+      type: "internationalizedArrayText",
       group: "legal",
-      of: [defineArrayMember({ type: "block" })],
     }),
   ],
   preview: {

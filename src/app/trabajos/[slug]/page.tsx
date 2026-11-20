@@ -8,12 +8,14 @@ import { ProjectCredits } from "@/components/trabajo/project-credits";
 import { ProjectDescription } from "@/components/trabajo/project-description";
 import { ProjectPagination } from "@/components/trabajo/project-pagination";
 import { sanityFetch, TAGS } from "@/sanity/fetch";
+import { IDIOMA_BASE } from "@/sanity/i18n";
 import { TRABAJOS_SLUGS_QUERY } from "@/sanity/queries/trabajo";
 import { getConfiguracion, getTrabajo } from "@/sanity/queries";
 
 export async function generateStaticParams() {
   const slugs = await sanityFetch({
     query: TRABAJOS_SLUGS_QUERY,
+    params: { idioma: IDIOMA_BASE },
     tags: [TAGS.trabajo],
   });
   return slugs.filter(Boolean).map((slug) => ({ slug: slug as string }));

@@ -25,25 +25,27 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `2.1` — i18n en Sanity
+> ### Paso `2.2` — i18n en Next (routing)
 >
-> **Estado:** no empezado. **✅ La fase 1 está cerrada:** el portfolio anda en español, con las
-> tres pantallas sobre datos reales.
+> **Estado:** no empezado. El `2.1` quedó ✅ el 20/11/2026: Sanity ya separa los idiomas.
 >
-> **Qué hay que hacer:** el enfoque híbrido de §9.2.
-> 1. `@sanity/document-internationalization` para **`trabajo`**: tiene URL propia y Portable
->    Text, así que va **document-level**.
-> 2. `@sanity/internationalized-array` para **`configuracion`**: son strings cortos sin URL, así
->    que va **field-level**.
-> 3. Idiomas: `es` (base) y `en`.
+> **Qué hay que hacer:** el routing de §9.3.
+> 1. `app/[locale]/...` con `localePrefix: 'as-needed'`: **`es` sin prefijo**, `en` prefijado.
+> 2. `generateStaticParams` devuelve el **producto de idiomas × slugs**.
+> 3. Los `IDIOMA_BASE` hardcodeados en las páginas pasan a salir del segmento de ruta.
+>    Están en `src/app/page.tsx`, `trabajos/page.tsx` y `trabajos/[slug]/page.tsx`.
+> 4. Textos de interfaz a archivos de mensajes (§9.4): hoy están sueltos en el markup.
 >
-> ⚠️ **Avisarle a Gala antes de que cargue obra real:** con document-level, agregar una foto
-> después obliga a agregarla **en los dos idiomas** (§9.2). Es el precio de tener slugs y
-> publicación por idioma.
+> ⚠️ **Decisión pendiente antes de arrancar:** si los **segmentos de ruta** se traducen
+> (`/en/works`) o quedan iguales (`/en/trabajos`). Es la pendiente n.º 4 de §15.
 >
-> **Criterio de terminado:** se puede crear la versión EN de un trabajo desde el Studio.
+> **Datos útiles:** ya hay una traducción cargada para probar — `casa-elen` (ES) ↔ `elen-house`
+> (EN). **Los slugs son distintos por idioma**, así que el routing tiene que resolver por
+> idioma + slug, no asumir el mismo slug.
 >
-> **Cuando termine:** marcar `2.1` ✅ en §1.9 y mover este bloque a `2.2`.
+> **Criterio de terminado:** `/trabajos/casa-elen` y `/en/.../elen-house` renderizan.
+>
+> **Cuando termine:** marcar `2.2` ✅ en §1.9 y mover este bloque a `2.3`.
 
 ## Lo que ya está resuelto
 
@@ -199,8 +201,8 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | | 1.4 Listado | ✅ 19/11/2026 |
 | | 1.5 Ficha | ✅ 19/11/2026 |
 | | 1.6 Home | ✅ 20/11/2026 |
-| **Fase 2** | 2.1 i18n en Sanity | 🔴 **NEXT** |
-| | 2.2 i18n en Next | ⬜ |
+| **Fase 2** | 2.1 i18n en Sanity | ✅ 20/11/2026 |
+| | 2.2 i18n en Next | 🔴 **NEXT** |
 | | 2.3 Switcher + hreflang | ⬜ |
 | **Fase 3** | 3.1 Webhook de revalidación | ⬜ |
 | | 3.2 SEO | ⬜ |
@@ -1183,8 +1185,13 @@ Sanity tiene dos estrategias y **la recomendación oficial depende del tipo de c
 
 | Documento | Estrategia | Plugin | Por qué |
 |---|---|---|---|
-| `proyecto`, `noticia` | **document-level** | `@sanity/document-internationalization` | tienen **URL propia** (slug por idioma) y **Portable Text**. Sanity desaconseja field-level con Portable Text porque se chocan los límites de atributos. Además permite publicar cada idioma por separado. |
-| `configuracion` | **field-level** | `@sanity/internationalized-array` | son strings cortos, no tienen URL. Duplicar el documento entero sería absurdo. |
+| `trabajo`, `noticia` | **document-level** | `@sanity/document-internationalization` | tienen **URL propia** (slug por idioma) y **Portable Text**. Sanity desaconseja field-level con Portable Text porque se chocan los límites de atributos. Además permite publicar cada idioma por separado. |
+| `configuracion` | **field-level** | `sanity-plugin-internationalized-array` | son strings cortos, no tienen URL. Duplicar el documento entero sería absurdo. |
+
+**Por qué `configuracion` va field-level y no document-level:** la mayoría de sus campos **no se
+traducen** — mail, teléfono, redes, dirección. Un documento por idioma los duplicaría y tarde o
+temprano se desincronizan. Solo los textos largos llevan una versión por idioma, dentro del mismo
+documento.
 
 **El costo de document-level, dicho claro:** cada idioma es un documento aparte, así que la
 galería queda duplicada. Al crear la traducción el plugin **copia el documento entero**, imágenes

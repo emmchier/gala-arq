@@ -42,24 +42,7 @@ export type Configuracion = {
   _updatedAt: string;
   _rev: string;
   nombreEstudio?: string;
-  textoEstudio?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "normal";
-    listItem?: never;
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  }>;
+  textoEstudio?: InternationalizedArrayText;
   retrato?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -78,25 +61,14 @@ export type Configuracion = {
   direccion?: string;
   instagram?: string;
   behance?: string;
-  textoLegal?: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  }>;
+  textoLegal?: InternationalizedArrayText;
 };
+
+export type InternationalizedArrayText = Array<
+  {
+    _key: string;
+  } & InternationalizedArrayTextValue
+>;
 
 export type SanityImageCrop = {
   _type: "sanity.imageCrop";
@@ -112,6 +84,53 @@ export type SanityImageHotspot = {
   y?: number;
   height?: number;
   width?: number;
+};
+
+export type InternationalizedArrayTextValue = {
+  _type: "internationalizedArrayTextValue";
+  value?: string;
+  language?: string;
+};
+
+export type InternationalizedArrayStringValue = {
+  _type: "internationalizedArrayStringValue";
+  value?: string;
+  language?: string;
+};
+
+export type InternationalizedArrayString = Array<
+  {
+    _key: string;
+  } & InternationalizedArrayStringValue
+>;
+
+export type TranslationMetadata = {
+  _id: string;
+  _type: "translation.metadata";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  translations?: InternationalizedArrayReference;
+  schemaTypes?: Array<string>;
+};
+
+export type InternationalizedArrayReference = Array<
+  {
+    _key: string;
+  } & InternationalizedArrayReferenceValue
+>;
+
+export type TrabajoReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "trabajo";
+};
+
+export type InternationalizedArrayReferenceValue = {
+  _type: "internationalizedArrayReferenceValue";
+  value?: TrabajoReference;
+  language?: string;
 };
 
 export type Trabajo = {
@@ -168,6 +187,7 @@ export type Trabajo = {
   seoTitle?: string;
   seoDescription?: string;
   orderRank?: string;
+  idioma?: string;
 };
 
 export type Slug = {
@@ -278,8 +298,16 @@ export type AllSanitySchemaTypes =
   | SanityImageAssetReference
   | SanityFileAssetReference
   | Configuracion
+  | InternationalizedArrayText
   | SanityImageCrop
   | SanityImageHotspot
+  | InternationalizedArrayTextValue
+  | InternationalizedArrayStringValue
+  | InternationalizedArrayString
+  | TranslationMetadata
+  | InternationalizedArrayReference
+  | TrabajoReference
+  | InternationalizedArrayReferenceValue
   | Trabajo
   | Slug
   | SanityImagePaletteSwatch
@@ -296,24 +324,7 @@ export type AllSanitySchemaTypes =
 // Query: *[_type == "configuracion"][0]  {    nombreEstudio,    textoEstudio,    retrato {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    email,    telefono,    direccion,    instagram,    behance,    cv,    textoLegal  }
 export type CONFIGURACION_QUERY_RESULT = {
   nombreEstudio: string | null;
-  textoEstudio: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "normal";
-    listItem?: never;
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  }> | null;
+  textoEstudio: InternationalizedArrayText | null;
   retrato: {
     asset: {
       _id: string;
@@ -343,29 +354,12 @@ export type CONFIGURACION_QUERY_RESULT = {
     media?: unknown;
     _type: "file";
   } | null;
-  textoLegal: Array<{
-    children?: Array<{
-      marks?: Array<string>;
-      text?: string;
-      _type: "span";
-      _key: string;
-    }>;
-    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
-    listItem?: "bullet" | "number";
-    markDefs?: Array<{
-      href?: string;
-      _type: "link";
-      _key: string;
-    }>;
-    level?: number;
-    _type: "block";
-    _key: string;
-  }> | null;
+  textoLegal: InternationalizedArrayText | null;
 } | null;
 
 // Source: src/sanity/queries/trabajo.ts
 // Variable: TRABAJOS_LISTADO_QUERY
-// Query: *[_type == "trabajo" && defined(slug.current)]  | order(orderRank)  {    _id,    titulo,    "slug": slug.current,    anio,    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }}  }
+// Query: *[_type == "trabajo" && idioma == $idioma && defined(slug.current)]  | order(orderRank)  {    _id,    titulo,    "slug": slug.current,    anio,    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }}  }
 export type TRABAJOS_LISTADO_QUERY_RESULT = Array<{
   _id: string;
   titulo: string | null;
@@ -394,7 +388,7 @@ export type TRABAJOS_LISTADO_QUERY_RESULT = Array<{
 
 // Source: src/sanity/queries/trabajo.ts
 // Variable: TRABAJOS_DESTACADOS_QUERY
-// Query: *[_type == "trabajo" && destacado == true && defined(slug.current)]  | order(orderRank)  {    _id,    titulo,    "slug": slug.current,    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }}  }
+// Query: *[_type == "trabajo" && destacado == true && idioma == $idioma && defined(slug.current)]  | order(orderRank)  {    _id,    titulo,    "slug": slug.current,    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }}  }
 export type TRABAJOS_DESTACADOS_QUERY_RESULT = Array<{
   _id: string;
   titulo: string | null;
@@ -422,7 +416,7 @@ export type TRABAJOS_DESTACADOS_QUERY_RESULT = Array<{
 
 // Source: src/sanity/queries/trabajo.ts
 // Variable: TRABAJO_QUERY
-// Query: *[_type == "trabajo" && slug.current == $slug][0]  {    _id,    titulo,    "slug": slug.current,    ubicacion,    anio,    descripcion,    creditos[]{ _key, rol, valor },    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    galeria[] {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    seoTitle,    seoDescription,    orderRank,    // Los vecinos viajan en la MISMA ida (spec §8.5). Antes eran una query    // aparte por ficha, que duplicaba los requests sin necesidad.    "anterior": *[_type == "trabajo" && defined(slug.current) && orderRank < ^.orderRank]      | order(orderRank desc)[0]{ titulo, "slug": slug.current },    "siguiente": *[_type == "trabajo" && defined(slug.current) && orderRank > ^.orderRank]      | order(orderRank asc)[0]{ titulo, "slug": slug.current }  }
+// Query: *[_type == "trabajo" && slug.current == $slug && idioma == $idioma][0]  {    _id,    titulo,    "slug": slug.current,    ubicacion,    anio,    descripcion,    creditos[]{ _key, rol, valor },    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    galeria[] {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    seoTitle,    seoDescription,    orderRank,    // Los vecinos viajan en la MISMA ida (spec §8.5). Antes eran una query    // aparte por ficha, que duplicaba los requests sin necesidad.    "anterior": *[_type == "trabajo" && idioma == ^.idioma && defined(slug.current) && orderRank < ^.orderRank]      | order(orderRank desc)[0]{ titulo, "slug": slug.current },    "siguiente": *[_type == "trabajo" && idioma == ^.idioma && defined(slug.current) && orderRank > ^.orderRank]      | order(orderRank asc)[0]{ titulo, "slug": slug.current }  }
 export type TRABAJO_QUERY_RESULT = {
   _id: string;
   titulo: string | null;
@@ -506,17 +500,17 @@ export type TRABAJO_QUERY_RESULT = {
 
 // Source: src/sanity/queries/trabajo.ts
 // Variable: TRABAJOS_SLUGS_QUERY
-// Query: *[_type == "trabajo" && defined(slug.current)].slug.current
+// Query: *[_type == "trabajo" && idioma == $idioma && defined(slug.current)].slug.current
 export type TRABAJOS_SLUGS_QUERY_RESULT = Array<string | null>;
 
 // Query TypeMap
 declare global {
   interface SanityQueries {
     '\n  *[_type == "configuracion"][0]\n  {\n    nombreEstudio,\n    textoEstudio,\n    retrato {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    email,\n    telefono,\n    direccion,\n    instagram,\n    behance,\n    cv,\n    textoLegal\n  }\n': CONFIGURACION_QUERY_RESULT;
-    '\n  *[_type == "trabajo" && defined(slug.current)]\n  | order(orderRank)\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    anio,\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n}\n  }\n': TRABAJOS_LISTADO_QUERY_RESULT;
-    '\n  *[_type == "trabajo" && destacado == true && defined(slug.current)]\n  | order(orderRank)\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n}\n  }\n': TRABAJOS_DESTACADOS_QUERY_RESULT;
-    '\n  *[_type == "trabajo" && slug.current == $slug][0]\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    ubicacion,\n    anio,\n    descripcion,\n    creditos[]{ _key, rol, valor },\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    galeria[] {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    seoTitle,\n    seoDescription,\n    orderRank,\n\n    // Los vecinos viajan en la MISMA ida (spec \xA78.5). Antes eran una query\n    // aparte por ficha, que duplicaba los requests sin necesidad.\n    "anterior": *[_type == "trabajo" && defined(slug.current) && orderRank < ^.orderRank]\n      | order(orderRank desc)[0]{ titulo, "slug": slug.current },\n    "siguiente": *[_type == "trabajo" && defined(slug.current) && orderRank > ^.orderRank]\n      | order(orderRank asc)[0]{ titulo, "slug": slug.current }\n  }\n': TRABAJO_QUERY_RESULT;
-    '\n  *[_type == "trabajo" && defined(slug.current)].slug.current\n': TRABAJOS_SLUGS_QUERY_RESULT;
+    '\n  *[_type == "trabajo" && idioma == $idioma && defined(slug.current)]\n  | order(orderRank)\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    anio,\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n}\n  }\n': TRABAJOS_LISTADO_QUERY_RESULT;
+    '\n  *[_type == "trabajo" && destacado == true && idioma == $idioma && defined(slug.current)]\n  | order(orderRank)\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n}\n  }\n': TRABAJOS_DESTACADOS_QUERY_RESULT;
+    '\n  *[_type == "trabajo" && slug.current == $slug && idioma == $idioma][0]\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    ubicacion,\n    anio,\n    descripcion,\n    creditos[]{ _key, rol, valor },\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    galeria[] {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    seoTitle,\n    seoDescription,\n    orderRank,\n\n    // Los vecinos viajan en la MISMA ida (spec \xA78.5). Antes eran una query\n    // aparte por ficha, que duplicaba los requests sin necesidad.\n    "anterior": *[_type == "trabajo" && idioma == ^.idioma && defined(slug.current) && orderRank < ^.orderRank]\n      | order(orderRank desc)[0]{ titulo, "slug": slug.current },\n    "siguiente": *[_type == "trabajo" && idioma == ^.idioma && defined(slug.current) && orderRank > ^.orderRank]\n      | order(orderRank asc)[0]{ titulo, "slug": slug.current }\n  }\n': TRABAJO_QUERY_RESULT;
+    '\n  *[_type == "trabajo" && idioma == $idioma && defined(slug.current)].slug.current\n': TRABAJOS_SLUGS_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too

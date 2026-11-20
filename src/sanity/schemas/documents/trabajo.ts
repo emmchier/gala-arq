@@ -134,6 +134,16 @@ export const trabajo = defineType({
     }),
 
     orderRankField({ type: "trabajo" }),
+
+    // Lo escribe y lo lee el plugin de traduccion por documento (spec §9.2).
+    // Oculto: Gala cambia de idioma con el selector del Studio, no editando
+    // este campo a mano.
+    defineField({
+      name: "idioma",
+      type: "string",
+      readOnly: true,
+      hidden: true,
+    }),
   ],
   preview: {
     select: {
@@ -141,10 +151,11 @@ export const trabajo = defineType({
       subtitle: "anio",
       media: "portada",
       destacado: "destacado",
+      idioma: "idioma",
     },
-    prepare: ({ title, subtitle, media, destacado }) => ({
+    prepare: ({ title, subtitle, media, destacado, idioma }) => ({
       title: destacado ? `★ ${title}` : title,
-      subtitle: subtitle ? String(subtitle) : undefined,
+      subtitle: [idioma?.toUpperCase(), subtitle].filter(Boolean).join(" · "),
       media,
     }),
   },

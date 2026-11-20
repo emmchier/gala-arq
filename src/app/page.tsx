@@ -3,12 +3,17 @@ import { MainNav } from "@/components/layout/main-nav";
 import { SocialLinks } from "@/components/layout/social-links";
 import { FeaturedCarousel } from "@/components/home/featured-carousel";
 import { sanityFetch, TAGS } from "@/sanity/fetch";
+import { IDIOMA_BASE } from "@/sanity/i18n";
 import { TRABAJOS_DESTACADOS_QUERY } from "@/sanity/queries/trabajo";
 import { getConfiguracion } from "@/sanity/queries";
 
 export default async function HomePage() {
   const [destacados, config] = await Promise.all([
-    sanityFetch({ query: TRABAJOS_DESTACADOS_QUERY, tags: [TAGS.trabajo] }),
+    sanityFetch({
+      query: TRABAJOS_DESTACADOS_QUERY,
+      params: { idioma: IDIOMA_BASE },
+      tags: [TAGS.trabajo],
+    }),
     getConfiguracion(),
   ]);
 

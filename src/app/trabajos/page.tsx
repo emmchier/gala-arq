@@ -4,6 +4,7 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { ProjectGrid } from "@/components/layout/project-grid";
 import { SanityImage } from "@/components/sanity-image";
 import { sanityFetch, TAGS } from "@/sanity/fetch";
+import { IDIOMA_BASE } from "@/sanity/i18n";
 import { TRABAJOS_LISTADO_QUERY } from "@/sanity/queries/trabajo";
 import { getConfiguracion } from "@/sanity/queries";
 
@@ -13,7 +14,11 @@ import { getConfiguracion } from "@/sanity/queries";
  */
 export default async function TrabajosPage() {
   const [trabajos, config] = await Promise.all([
-    sanityFetch({ query: TRABAJOS_LISTADO_QUERY, tags: [TAGS.trabajo] }),
+    sanityFetch({
+      query: TRABAJOS_LISTADO_QUERY,
+      params: { idioma: IDIOMA_BASE },
+      tags: [TAGS.trabajo],
+    }),
     getConfiguracion(),
   ]);
 
