@@ -976,6 +976,56 @@ Workers y no en Node.
 
 # §7. Arquitectura
 
+## 7.0 ⚠️ Por qué el contenido NO va a un store de cliente
+
+> Planteado por el usuario el 20/11/2026: *"que la info de Sanity se vaya guardando en Zustand, y
+> al navegar se consulte primero ahí"*. **El objetivo es correcto; el mecanismo sobra**, y los
+> números lo muestran.
+
+**Medido sobre el sitio construido, con producción local:**
+
+| Acción del visitante | Requests a la API de Sanity |
+|---|---|
+| Entrar a la Home | **0** |
+| Home → `/trabajos` | **0** |
+| `/trabajos` → una ficha | **0** |
+| Volver atrás | **0** — y **0 recursos de red en total** |
+
+**El navegador nunca le habla a Sanity.** Las páginas son estáticas: el contenido ya viene dentro
+del HTML, resuelto en build. Un store de cliente solo ahorra requests si el navegador estuviera
+pidiendo datos, y acá no pide ninguno.
+
+**Qué pasaría si igual lo metiéramos:**
+
+1. El contenido viajaría **dos veces**: una en el HTML y otra como JSON para hidratar el store.
+2. Las pantallas tendrían que ser **client components**, perdiendo el renderizado en servidor.
+3. Aparecería un **estado de carga** donde hoy no hay ninguno.
+4. **Next ya cachea la navegación** en memoria (Router Cache): volver atrás costó **0 recursos**.
+
+**La regla "evitar todas las requests posibles a Sanity" se cumple, y por una vía mejor:** las
+queries las hace el **build**, no el visitante. Con 10 trabajos son **25 lecturas por build**
+contra un límite de 250.000 mensuales.
+
+> 📌 **Cuándo SÍ haría falta un store de contenido:** si el sitio pasara a renderizarse en
+> cliente, o si apareciera contenido que depende del usuario o de filtros pedidos al vuelo.
+> Ninguno de los dos está en el alcance.
+>
+> **Zustand sigue en el proyecto para lo que sí le corresponde: estado de interfaz.** Hoy lo usa
+> el carrusel (§5.2).
+
+### Optimización de lecturas en build
+
+De **45 a 25** lecturas por build (20/11/2026), sin cambiar una sola pantalla:
+
+| Cambio | Ahorro |
+|---|---|
+| Los vecinos (`PREV`/`NEXT`) viajan dentro de la query del trabajo | −10 |
+| `cache()` de React: `generateMetadata` y la página comparten la lectura | −10 |
+
+⚠️ **No se pudo medir el conteo HTTP real del build** desde acá: ni `instrumentation.ts` ni el
+`logging.fetches` de Next alcanzan a los workers de generación estática. El número de arriba son
+**lecturas del wrapper**; el de red puede ser menor, porque Next deduplica fetches idénticos.
+
 ## 7.1 Estratégia de renderizado
 
 Un portfolio es contenido que cambia poco y se lee mucho. Entonces:
