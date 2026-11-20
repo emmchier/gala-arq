@@ -1,3 +1,4 @@
+import type { Idioma } from "@/sanity/i18n";
 import { Brand } from "./brand";
 import { LanguageSwitcher } from "./language-switcher";
 import { MobileMenu } from "./mobile-menu";
@@ -8,22 +9,30 @@ import { MobileMenu } from "./mobile-menu";
  * de acceso a la navegacion (spec §5.5).
  */
 export function SiteHeader({
+  idioma,
+  destinos,
   withMenu = false,
   instagram,
   behance,
 }: {
+  idioma: Idioma;
+  destinos: Partial<Record<Idioma, string | null>>;
   withMenu?: boolean;
   instagram?: string | null;
   behance?: string | null;
 }) {
   return (
     <header className="flex h-[var(--header-h)] shrink-0 items-center justify-between">
-      <Brand />
+      <Brand idioma={idioma} />
       <div className="flex items-center gap-5">
         {withMenu ? (
-          <MobileMenu instagram={instagram} behance={behance} />
+          <MobileMenu
+            idioma={idioma}
+            instagram={instagram}
+            behance={behance}
+          />
         ) : null}
-        <LanguageSwitcher />
+        <LanguageSwitcher idioma={idioma} destinos={destinos} />
       </div>
     </header>
   );

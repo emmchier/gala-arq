@@ -1,4 +1,6 @@
 import Link from "next/link";
+import type { Idioma } from "@/sanity/i18n";
+import { t } from "@/lib/mensajes";
 
 /**
  * Breadcrumb del sidebar (spec §5.1). Ocupa la columna fija en Listado y
@@ -8,16 +10,18 @@ import Link from "next/link";
  * que la flecha ya dice (decision del usuario, 19/11/2026).
  */
 export function Breadcrumb({
+  idioma,
   backHref,
   current,
   className,
 }: {
+  idioma: Idioma;
   backHref: string;
   current: string;
   className?: string;
 }) {
   return (
-    <nav aria-label="Miga de pan" className={className}>
+    <nav aria-label={t(idioma).migaDePan} className={className}>
       <Link
         href={backHref}
         className="group inline-flex items-center gap-2 text-label text-ink uppercase"

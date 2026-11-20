@@ -1,18 +1,29 @@
 import Link from "next/link";
-import { NAV } from "@/lib/site";
+import type { Idioma } from "@/sanity/i18n";
+import { t } from "@/lib/mensajes";
+import { rutaSeccion } from "@/lib/routes";
+
+const SECCIONES = ["trabajos", "estudio", "noticias", "contacto"] as const;
 
 /** Navegacion principal. En el diseno solo existe en la Home (spec §5.1). */
-export function MainNav({ className }: { className?: string }) {
+export function MainNav({
+  idioma,
+  className,
+}: {
+  idioma: Idioma;
+  className?: string;
+}) {
+  const m = t(idioma);
   return (
-    <nav aria-label="Principal" className={className}>
+    <nav aria-label={m.navegacion} className={className}>
       <ul className="flex flex-col">
-        {NAV.map((item) => (
-          <li key={item.href}>
+        {SECCIONES.map((s) => (
+          <li key={s}>
             <Link
-              href={item.href}
+              href={rutaSeccion(idioma, s)}
               className="text-label text-quiet uppercase transition-colors duration-fast ease-site hover:text-ink"
             >
-              {item.label}
+              {m.nav[s]}
             </Link>
           </li>
         ))}

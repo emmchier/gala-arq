@@ -1,9 +1,14 @@
+import type { Idioma } from "@/sanity/i18n";
+import { t } from "@/lib/mensajes";
+
 /** Instagram y Behance, desde `configuracion`. Sin tracking, 14/16 (spec §4.3). */
 export function SocialLinks({
+  idioma,
   instagram,
   behance,
   className,
 }: {
+  idioma: Idioma;
   instagram?: string | null;
   behance?: string | null;
   className?: string;
@@ -16,7 +21,7 @@ export function SocialLinks({
   if (items.length === 0) return null;
 
   return (
-    <nav aria-label="Redes" className={className}>
+    <nav aria-label={t(idioma).redes} className={className}>
       <ul className="flex flex-col">
         {items.map((item) => (
           <li key={item.label}>

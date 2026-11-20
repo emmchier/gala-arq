@@ -62,7 +62,13 @@ export const TRABAJO_QUERY = defineQuery(`
     "anterior": *[_type == "trabajo" && idioma == ^.idioma && defined(slug.current) && orderRank < ^.orderRank]
       | order(orderRank desc)[0]{ titulo, "slug": slug.current },
     "siguiente": *[_type == "trabajo" && idioma == ^.idioma && defined(slug.current) && orderRank > ^.orderRank]
-      | order(orderRank asc)[0]{ titulo, "slug": slug.current }
+      | order(orderRank asc)[0]{ titulo, "slug": slug.current },
+
+    // Slugs equivalentes en los otros idiomas, para el switcher (spec §9.3).
+    // Los slugs NO coinciden entre idiomas, asi que hay que resolverlos:
+    // "casa-elen" en ES es "elen-house" en EN.
+    "traducciones": *[_type == "translation.metadata" && references(^._id)][0]
+      .translations[]{ "idioma": _key, "slug": value->slug.current }
   }
 `);
 

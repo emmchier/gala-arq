@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import type { Idioma } from "@/sanity/i18n";
+import { t } from "@/lib/mensajes";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 
@@ -19,12 +21,16 @@ import { SiteFooter } from "./site-footer";
  */
 export function PageFrame({
   variant,
+  idioma,
+  destinos,
   config,
   sidebarTop,
   sidebarBottom,
   children,
 }: {
   variant: "home" | "inner";
+  idioma: Idioma;
+  destinos: Partial<Record<Idioma, string | null>>;
   config: {
     nombreEstudio: string | null;
     instagram?: string | null;
@@ -35,6 +41,7 @@ export function PageFrame({
   children: ReactNode;
 }) {
   const isHome = variant === "home";
+  const m = t(idioma);
 
   return (
     <div
@@ -46,10 +53,12 @@ export function PageFrame({
         href="#contenido"
         className="sr-only focus:not-sr-only focus:absolute focus:left-[var(--page-gutter)] focus:top-2 focus:z-50 focus:bg-paper focus:p-2 focus:text-label focus:text-ink focus:uppercase"
       >
-        Saltar al contenido
+        {m.saltarAlContenido}
       </a>
 
       <SiteHeader
+        idioma={idioma}
+        destinos={destinos}
         withMenu={!isHome}
         instagram={config.instagram}
         behance={config.behance}
@@ -89,6 +98,7 @@ export function PageFrame({
       </main>
 
       <SiteFooter
+        idioma={idioma}
         split={isHome}
         nombreEstudio={config.nombreEstudio ?? "Gala Arq"}
       />

@@ -5,6 +5,9 @@ import { useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { SanityImage, type SanityImageSource } from "@/components/sanity-image";
 import { useCarousel } from "@/stores/carousel";
+import type { Idioma } from "@/sanity/i18n";
+import { t } from "@/lib/mensajes";
+import { rutaTrabajo } from "@/lib/routes";
 
 /** Paleta de las barras: el color sale de la posicion (spec §4.4). */
 const FILL = [
@@ -37,8 +40,15 @@ type Destacado = {
  * El progreso lo anima CSS, no JS, asi que no hay `requestAnimationFrame` ni
  * timers por frame corriendo en el hilo principal.
  */
-export function FeaturedCarousel({ trabajos }: { trabajos: Destacado[] }) {
+export function FeaturedCarousel({
+  idioma,
+  trabajos,
+}: {
+  idioma: Idioma;
+  trabajos: Destacado[];
+}) {
   const total = trabajos.length;
+  const m = t(idioma);
 
   const { index, tick, paused } = useCarousel(
     useShallow((s) => ({ index: s.index, tick: s.tick, paused: s.paused })),
@@ -98,7 +108,7 @@ export function FeaturedCarousel({ trabajos }: { trabajos: Destacado[] }) {
 
   return (
     <section
-      aria-label="Trabajos destacados"
+      aria-label={m.trabajosDestacados}
       aria-roledescription="carrusel"
       className="flex min-h-0 flex-1 flex-col gap-5"
       onMouseEnter={() => setPaused(true)}
@@ -113,7 +123,7 @@ export function FeaturedCarousel({ trabajos }: { trabajos: Destacado[] }) {
             key={t._id}
             type="button"
             onClick={() => irA(i)}
-            aria-label={`Ir a ${t.titulo ?? `trabajo ${i + 1}`}`}
+            aria-label={m.irA(t.titulo ?? `${i + 1}`)}
             aria-current={i === index ? "true" : undefined}
             className="h-[3px] w-14 overflow-hidden rounded-full bg-rail"
           >
@@ -175,7 +185,7 @@ export function FeaturedCarousel({ trabajos }: { trabajos: Destacado[] }) {
             }}
             onPointerDown={(e) => e.stopPropagation()}
             onPointerUp={(e) => e.stopPropagation()}
-            aria-label="Siguiente trabajo"
+            aria-label={m.siguienteTrabajo}
             className="absolute right-0 top-1/2 flex size-[42px] -translate-y-1/2 items-center justify-center rounded-full bg-ink/70 text-paper transition-colors duration-fast ease-site hover:bg-ink"
           >
             <svg
@@ -197,10 +207,10 @@ export function FeaturedCarousel({ trabajos }: { trabajos: Destacado[] }) {
         <div className="flex shrink-0 flex-col gap-1">
           <p className="text-body text-ink">{actual.titulo}</p>
           <Link
-            href={`/trabajos/${actual.slug}`}
+            href={rutaTrabajo(idioma, actual.slug)}
             className="w-fit text-body text-quiet underline underline-offset-4 transition-colors duration-fast ease-site hover:text-ink"
           >
-            Ver caso
+            {m.verCaso}
           </Link>
         </div>
       ) : null}

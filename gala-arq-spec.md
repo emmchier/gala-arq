@@ -25,27 +25,24 @@ Sesión nueva de Claude, decís **"Gala"** y nada más. Claude:
 
 ## 🔴 NEXT STEP
 
-> ### Paso `2.2` — i18n en Next (routing)
+> ### Paso `3.1` — Webhook de revalidación
 >
-> **Estado:** no empezado. El `2.1` quedó ✅ el 20/11/2026: Sanity ya separa los idiomas.
+> **Estado:** no empezado. **La fase 2 está cerrada:** los pasos `2.2` y `2.3` salieron juntos.
 >
-> **Qué hay que hacer:** el routing de §9.3.
-> 1. `app/[locale]/...` con `localePrefix: 'as-needed'`: **`es` sin prefijo**, `en` prefijado.
-> 2. `generateStaticParams` devuelve el **producto de idiomas × slugs**.
-> 3. Los `IDIOMA_BASE` hardcodeados en las páginas pasan a salir del segmento de ruta.
->    Están en `src/app/page.tsx`, `trabajos/page.tsx` y `trabajos/[slug]/page.tsx`.
-> 4. Textos de interfaz a archivos de mensajes (§9.4): hoy están sueltos en el markup.
+> **Qué hay que hacer:** que Gala publique en el Studio y el sitio se actualice sin rebuild.
+> 1. Route handler en `/api/revalidate` que valide la firma del webhook y llame `revalidateTag`.
+> 2. Secreto compartido en `.env.local` y en los secrets del Worker: **nunca en el repo** (§13.11).
+> 3. Webhook en Sanity apuntando a la URL de `workers.dev`, disparando en `trabajo` y
+>    `configuracion`.
 >
-> ⚠️ **Decisión pendiente antes de arrancar:** si los **segmentos de ruta** se traducen
-> (`/en/works`) o quedan iguales (`/en/trabajos`). Es la pendiente n.º 4 de §15.
+> **Las etiquetas ya están puestas:** `sanityFetch` obliga a etiquetar cada lectura, y los tags
+> son `trabajo` y `configuracion` (§7.1).
 >
-> **Datos útiles:** ya hay una traducción cargada para probar — `casa-elen` (ES) ↔ `elen-house`
-> (EN). **Los slugs son distintos por idioma**, así que el routing tiene que resolver por
-> idioma + slug, no asumir el mismo slug.
+> ⚠️ **El plan free de Sanity da 2 webhooks** (§17.1). Alcanza, pero no sobra.
 >
-> **Criterio de terminado:** `/trabajos/casa-elen` y `/en/.../elen-house` renderizan.
+> **Criterio de terminado:** Gala publica un cambio y el sitio lo muestra en segundos.
 >
-> **Cuando termine:** marcar `2.2` ✅ en §1.9 y mover este bloque a `2.3`.
+> **Cuando termine:** marcar `3.1` ✅ en §1.9 y mover este bloque a `3.2`.
 
 ## Lo que ya está resuelto
 
@@ -202,9 +199,9 @@ Claude actualiza esta tabla al cerrar cada paso. **Es la fuente de verdad del pr
 | | 1.5 Ficha | ✅ 19/11/2026 |
 | | 1.6 Home | ✅ 20/11/2026 |
 | **Fase 2** | 2.1 i18n en Sanity | ✅ 20/11/2026 |
-| | 2.2 i18n en Next | 🔴 **NEXT** |
-| | 2.3 Switcher + hreflang | ⬜ |
-| **Fase 3** | 3.1 Webhook de revalidación | ⬜ |
+| | 2.2 i18n en Next | ✅ 20/11/2026 |
+| | 2.3 Switcher + hreflang | ✅ 20/11/2026 |
+| **Fase 3** | 3.1 Webhook de revalidación | 🔴 **NEXT** |
 | | 3.2 SEO | ⬜ |
 | | 3.3 Entorno de producción | ⬜ |
 | | 3.4 Accesibilidad y performance | ⬜ |

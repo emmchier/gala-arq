@@ -8,21 +8,28 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { NAV } from "@/lib/site";
+import type { Idioma } from "@/sanity/i18n";
+import { t } from "@/lib/mensajes";
+import { rutaSeccion } from "@/lib/routes";
+
+const SECCIONES = ["trabajos", "estudio", "noticias", "contacto"] as const;
 
 /**
  * Menu mobile de las paginas internas (spec §5.5).
- * Boton de texto "MENU" con el mismo estilo que el switcher de idioma.
+ * Boton de texto con el mismo estilo que el switcher de idioma.
  * Nada de icono de hamburguesa: el diseno no tiene iconografia.
  */
 export function MobileMenu({
+  idioma,
   instagram,
   behance,
 }: {
+  idioma: Idioma;
   instagram?: string | null;
   behance?: string | null;
 }) {
   const [open, setOpen] = useState(false);
+  const m = t(idioma);
   const redes = [
     { label: "Instagram", href: instagram },
     { label: "Behance", href: behance },
@@ -31,21 +38,21 @@ export function MobileMenu({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger className="text-label text-ink uppercase lg:hidden">
-        Menú
+        {m.menu}
       </SheetTrigger>
       <SheetContent side="right" className="bg-paper px-[var(--page-gutter)] py-8">
         <SheetTitle className="text-label text-quiet uppercase">
-          Navegación
+          {m.navegacion}
         </SheetTitle>
         <ul className="mt-8 flex flex-col gap-1">
-          {NAV.map((item) => (
-            <li key={item.href}>
+          {SECCIONES.map((s) => (
+            <li key={s}>
               <Link
-                href={item.href}
+                href={rutaSeccion(idioma, s)}
                 onClick={() => setOpen(false)}
                 className="text-label text-ink uppercase"
               >
-                {item.label}
+                {m.nav[s]}
               </Link>
             </li>
           ))}

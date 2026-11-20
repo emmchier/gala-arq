@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
 import { PageFrame } from "@/components/layout/page-frame";
 import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { ProjectGrid } from "@/components/layout/project-grid";
@@ -7,63 +6,62 @@ import { SanityImage } from "@/components/sanity-image";
 import { ProjectCredits } from "@/components/trabajo/project-credits";
 import { ProjectDescription } from "@/components/trabajo/project-description";
 import { ProjectPagination } from "@/components/trabajo/project-pagination";
-import { sanityFetch, TAGS } from "@/sanity/fetch";
-import { IDIOMA_BASE } from "@/sanity/i18n";
-import { TRABAJOS_SLUGS_QUERY } from "@/sanity/queries/trabajo";
 import { getConfiguracion, getTrabajo } from "@/sanity/queries";
+import { IDS_IDIOMA, type Idioma } from "@/sanity/i18n";
+import { t } from "@/lib/mensajes";
+import { rutaTrabajo, rutaTrabajos } from "@/lib/routes";
 
-export async function generateStaticParams() {
-  const slugs = await sanityFetch({
-    query: TRABAJOS_SLUGS_QUERY,
-    params: { idioma: IDIOMA_BASE },
-    tags: [TAGS.trabajo],
-  });
-  return slugs.filter(Boolean).map((slug) => ({ slug: slug as string }));
-}
-
-export async function generateMetadata({
-  params,
-}: PageProps<"/trabajos/[slug]">): Promise<Metadata> {
-  const { slug } = await params;
-  const t = await getTrabajo(slug);
-  if (!t) return {};
-
-  return {
-    title: t.seoTitle ?? t.titulo ?? undefined,
-    description: t.seoDescription ?? undefined,
-    openGraph: t.portada?.asset?.url
-      ? { images: [{ url: t.portada.asset.url }] }
-      : undefined,
-  };
-}
-
-/** Ficha de trabajo (spec §5.4). Variante 07: la galería es una cuadrícula. */
-export default async function TrabajoPage({
-  params,
-}: PageProps<"/trabajos/[slug]">) {
-  const { slug } = await params;
-
+/**
+ * Ficha de trabajo (spec §5.4). Variante 07: la galeria es una cuadricula.
+ */
+export async function TrabajoPage({
+  idioma,
+  slug,
+}: {
+  idioma: Idioma;
+  slug: string;
+}) {
   const [trabajo, config] = await Promise.all([
-    getTrabajo(slug),
+    getTrabajo(slug, idioma),
     getConfiguracion(),
   ]);
 
   if (!trabajo) notFound();
 
+  const m = t(idioma);
+
+  // El switcher necesita el slug del OTRO idioma, que no es el mismo.
+  // Si esa traduccion no existe, el idioma queda deshabilitado.
+  const destinos = Object.fromEntries(
+    IDS_IDIOMA.map((id) => {
+      if (id === idioma) return [id, rutaTrabajo(id, slug)];
+      const tr = trabajo.traducciones?.find((x) => x?.idioma === id);
+      return [id, tr?.slug ? rutaTrabajo(id, tr.slug) : null];
+    }),
+  ) as Partial<Record<Idioma, string | null>>;
+
   return (
     <PageFrame
       variant="inner"
+      idioma={idioma}
+      destinos={destinos}
       config={config ?? { nombreEstudio: null }}
-      sidebarTop={<Breadcrumb backHref="/trabajos" current="Trabajos" />}
+      sidebarTop={
+        <Breadcrumb
+          idioma={idioma}
+          backHref={rutaTrabajos(idioma)}
+          current={m.nav.trabajos}
+        />
+      }
       sidebarBottom={
         <ProjectPagination
+          idioma={idioma}
           anterior={trabajo.anterior}
           siguiente={trabajo.siguiente}
         />
       }
     >
-      {/* 30%: la ficha. Padding solo a la derecha, que es donde esta la
-          grilla de imagenes (spec §4.5). */}
+      {/* 30%: la ficha. Padding solo a la derecha (spec §4.5). */}
       <div className="flex flex-col gap-6 lg:pr-[var(--page-gutter)]">
         <header className="flex flex-col gap-2">
           <h1 className="text-display text-ink">{trabajo.titulo}</h1>

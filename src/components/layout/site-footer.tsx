@@ -1,12 +1,17 @@
+import type { Idioma } from "@/sanity/i18n";
+import { t } from "@/lib/mensajes";
+
 /**
  * Footer (spec §5.1). 48px, 10px quiet.
  * En la Home va partido entre los dos extremos; en Listado y Ficha, todo
  * junto a la izquierda.
  */
 export function SiteFooter({
+  idioma,
   nombreEstudio,
   split = false,
 }: {
+  idioma: Idioma;
   nombreEstudio: string;
   split?: boolean;
 }) {
@@ -28,7 +33,7 @@ export function SiteFooter({
       <div className="flex items-center gap-x-2">
         {split ? null : dot}
         <a href="/legales" className="text-fine text-quiet">
-          Legales
+          {t(idioma).legales}
         </a>
         {dot}
         <a

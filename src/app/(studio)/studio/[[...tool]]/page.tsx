@@ -6,7 +6,7 @@
  * navegador, asi que no hace falta runtime del lado del Worker.
  */
 import { NextStudio } from "next-sanity/studio";
-import config from "../../../../sanity.config";
+import config from "../../../../../sanity.config";
 
 export const dynamic = "force-static";
 

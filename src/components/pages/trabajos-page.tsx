@@ -4,44 +4,54 @@ import { Breadcrumb } from "@/components/layout/breadcrumb";
 import { ProjectGrid } from "@/components/layout/project-grid";
 import { SanityImage } from "@/components/sanity-image";
 import { sanityFetch, TAGS } from "@/sanity/fetch";
-import { IDIOMA_BASE } from "@/sanity/i18n";
-import { TRABAJOS_LISTADO_QUERY } from "@/sanity/queries/trabajo";
 import { getConfiguracion } from "@/sanity/queries";
+import { TRABAJOS_LISTADO_QUERY } from "@/sanity/queries/trabajo";
+import type { Idioma } from "@/sanity/i18n";
+import { t } from "@/lib/mensajes";
+import { rutaHome, rutaTrabajo, rutaTrabajos } from "@/lib/routes";
 
-/**
- * Listado de trabajos (spec §5.3).
- * Grilla plana de 3 columnas, sin categorias ni filtros.
- */
-export default async function TrabajosPage() {
+/** Listado de trabajos (spec §5.3). Grilla plana, sin categorias ni filtros. */
+export async function TrabajosPage({ idioma }: { idioma: Idioma }) {
   const [trabajos, config] = await Promise.all([
     sanityFetch({
       query: TRABAJOS_LISTADO_QUERY,
-      params: { idioma: IDIOMA_BASE },
+      params: { idioma },
       tags: [TAGS.trabajo],
     }),
     getConfiguracion(),
   ]);
 
+  const m = t(idioma);
+
   return (
     <PageFrame
       variant="inner"
+      idioma={idioma}
+      destinos={{ es: rutaTrabajos("es"), en: rutaTrabajos("en") }}
       config={config ?? { nombreEstudio: null }}
-      sidebarTop={<Breadcrumb backHref="/" current="Trabajos" />}
+      sidebarTop={
+        <Breadcrumb
+          idioma={idioma}
+          backHref={rutaHome(idioma)}
+          current={m.nav.trabajos}
+        />
+      }
     >
-      {/* 30%: en el listado queda vacio (spec §5.3) */}
       <div className="hidden lg:block">
-        <h1 className="sr-only">Trabajos</h1>
+        <h1 className="sr-only">{m.nav.trabajos}</h1>
       </div>
 
-      {/* 50% */}
       <div className="w-full">
         <ProjectGrid>
-          {trabajos.map((t, i) => (
-            <article key={t._id} className="flex flex-col gap-[3.5px]">
-              <Link href={`/trabajos/${t.slug}`} className="group block">
+          {trabajos.map((trabajo, i) => (
+            <article key={trabajo._id} className="flex flex-col gap-[3.5px]">
+              <Link
+                href={rutaTrabajo(idioma, trabajo.slug ?? "")}
+                className="group block"
+              >
                 <div className="relative aspect-square w-full overflow-hidden bg-[color:var(--color-secondary)]">
                   <SanityImage
-                    image={t.portada}
+                    image={trabajo.portada}
                     aspect={1}
                     priority={i < 3}
                     sizes="(min-width: 1024px) 17vw, (min-width: 768px) 30vw, 45vw"
@@ -49,8 +59,8 @@ export default async function TrabajosPage() {
                   />
                 </div>
                 <div className="pb-2 pt-[3.5px]">
-                  <h2 className="text-body text-ink">{t.titulo}</h2>
-                  <time className="text-meta text-quiet">{t.anio}</time>
+                  <h2 className="text-body text-ink">{trabajo.titulo}</h2>
+                  <time className="text-meta text-quiet">{trabajo.anio}</time>
                 </div>
               </Link>
             </article>

@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { Manrope, Josefin_Sans } from "next/font/google";
-import "./globals.css";
+import type { Idioma } from "@/sanity/i18n";
 
 // spec §4.2 — Manrope para todo el sitio, Josefin Sans solo para el logo.
 // El peso base es 400 (regular): el 300 del Figma se veia demasiado fragil.
@@ -20,15 +20,20 @@ const josefinSans = Josefin_Sans({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Gala Arq",
-  description: "Estudio de arquitectura",
-};
-
-export default function RootLayout({ children }: LayoutProps<"/">) {
+/**
+ * `<html>` del sitio. Hay un layout raiz POR IDIOMA (spec §9.3), para que
+ * `lang` sea el correcto sin necesidad de middleware.
+ */
+export function RootHtml({
+  idioma,
+  children,
+}: {
+  idioma: Idioma;
+  children: ReactNode;
+}) {
   return (
     <html
-      lang="es"
+      lang={idioma}
       className={`${manrope.variable} ${josefinSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
