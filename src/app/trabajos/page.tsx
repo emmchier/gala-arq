@@ -23,13 +23,13 @@ export default async function TrabajosPage() {
       config={config ?? { nombreEstudio: null }}
       sidebarTop={<Breadcrumb backHref="/" current="Trabajos" />}
     >
-      {/* segundo 25%: en el listado queda vacio (spec §5.3) */}
-      <div className="hidden shrink-0 lg:block lg:w-[calc(var(--col-info)/0.75)]">
+      {/* 30%: en el listado queda vacio (spec §5.3) */}
+      <div className="hidden lg:block">
         <h1 className="sr-only">Trabajos</h1>
       </div>
 
-      {/* ultimo 50% */}
-      <div className="w-full lg:w-[calc(var(--col-media)/0.75)] lg:shrink-0">
+      {/* 50% */}
+      <div className="w-full">
         <ProjectGrid>
           {trabajos.map((t, i) => (
             <article key={t._id} className="flex flex-col gap-[3.5px]">

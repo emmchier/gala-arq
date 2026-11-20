@@ -78,10 +78,9 @@ export default async function TrabajoPage({
         />
       }
     >
-      {/* segundo 25%: la ficha.
-          64px de padding lateral para que el texto no se pegue ni a la
-          columna fija ni a la grilla de imagenes (spec §4.5). */}
-      <div className="flex shrink-0 flex-col gap-6 lg:w-[calc(var(--col-info)/0.75)] lg:px-[var(--page-gutter)]">
+      {/* 30%: la ficha. Padding solo a la derecha, que es donde esta la
+          grilla de imagenes (spec §4.5). */}
+      <div className="flex flex-col gap-6 lg:pr-[var(--page-gutter)]">
         <header className="flex flex-col gap-2">
           <h1 className="text-display text-ink">{trabajo.titulo}</h1>
           {trabajo.ubicacion ? (
@@ -96,8 +95,8 @@ export default async function TrabajoPage({
         <ProjectCredits creditos={trabajo.creditos} />
       </div>
 
-      {/* ultimo 50%: la galería */}
-      <div className="w-full lg:w-[calc(var(--col-media)/0.75)] lg:shrink-0">
+      {/* 50%: la galería */}
+      <div className="w-full">
         <ProjectGrid>
           {(trabajo.galeria ?? []).map((foto, i) => (
             <figure

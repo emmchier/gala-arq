@@ -112,8 +112,8 @@
      desktop. El Figma esta en pixels duros (177 / 288 / 629 + gaps de 72),
      pero eso se lee como estas tres proporciones, no como medidas fijas.
      Decision del usuario, 19/11/2026. */
-  --col-nav: 25%;    /* navegacion en Home, breadcrumb en las internas */
-  --col-info: 25%;   /* ficha del proyecto */
+  --col-nav: 20%;    /* navegacion en Home, breadcrumb en las internas */
+  --col-info: 30%;   /* ficha del trabajo */
   --col-media: 50%;  /* listado y galeria */
 
   --cell-gap: 8px;

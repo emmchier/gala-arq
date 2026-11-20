@@ -408,11 +408,14 @@ Todo el sitio vive en una grilla de columnas fijas. Medidas tomadas a **1366px**
 **Listado y Ficha** comparten la misma grilla:
 
 ```
-|   25%    |   25%    |            50%            |
-| nav /    | ficha    | listado / galería         |
-| breadcrumb |        |                           |
-└────────── contenido = 100% ──────────────────────┘
+|  20%   |      30%      |            50%            |
+| nav /  | ficha         | listado / galería         |
+| breadcrumb             |                           |
+└──────────── contenido = 100% ────────────────────────┘
 ```
+
+La columna de ficha lleva **64px de padding a la derecha**, que es donde está la grilla de
+imágenes. **A la izquierda no lleva**: ahí tiene la columna de navegación, que está casi vacía.
 
 **Home:** la navegación toma el primer **25%** y el carrusel el **70%** alineado a la derecha,
 dejando 5% de aire entre las dos.
@@ -432,8 +435,8 @@ grilla siga al navegador.
 | `header.site-header` | 80 px de alto |
 | Separación header → `main` | 64 px (el main arranca en y=144) |
 | `footer.site-footer` | 48 px de alto |
-| Columna de navegación / breadcrumb | **25%** |
-| Columna de ficha | **25%** |
+| Columna de navegación / breadcrumb | **20%** |
+| Columna de ficha | **30%** (+ 64px de padding a la derecha) |
 | Columna de medios | **50%** |
 | Carrusel de la Home | **70%**, alineado a la derecha |
 | **Celda de la grilla de medios** | **fluida**: `(50% − 16px) / 3` |
@@ -452,7 +455,17 @@ Un solo componente sirve para las dos pantallas.
    con `fixed`: así la columna sigue perteneciendo a la grilla y no hay que replicar sus
    posiciones a mano.
 
-**Cómo implementarla:** ✅ implementado en el paso 0.3, en `src/components/layout/page-frame.tsx`.
+**Cómo implementarla:** ✅ implementado en `src/components/layout/page-frame.tsx`, con **CSS Grid
+de tres columnas** y los porcentajes literales de esta tabla.
+
+> 📌 **Por qué grid y no flex anidado.** La primera versión anidaba flex y calculaba cada columna
+> como una fracción del resto (`calc(var(--col-info)/0.75)`). Esa cuenta **se rompe sola** cada
+> vez que cambia el ancho de la navegación, y de hecho se rompió al pasar de 25% a 20%. Con grid,
+> los números del código son los mismos que los de la spec.
+>
+> ⚠️ **Trampa al migrar de flex a grid:** las clases `order-*` que sobraban del layout flex
+> **siguen funcionando en grid** y reordenan las columnas. La navegación terminó en la tercera
+> columna hasta que se sacó el `order-1`.
 
 > ⚠️ **La trampa que apareció al construirlo:** en el Figma los **1238 son el contenido**, dentro
 > de los márgenes de 64. Si el contenedor lleva `max-width: 1238px` **más** el padding, el
@@ -680,13 +693,13 @@ accesibilidad conviene que tenga un `h1`, aunque sea visualmente oculto.
 └─ footer ─────────────────────────────────────────────────────────────┘
 ```
 
-> 📌 **La columna de ficha lleva 64px de padding lateral** para no pegarse a la grilla de
-> imágenes (decisión del usuario, 19/11/2026).
+> 📌 **La columna de ficha lleva 64px de padding a la derecha**, para no pegarse a la grilla de
+> imágenes (decisión del usuario, 20/11/2026).
 >
-> ⚠️ **Costo medido:** con 64px de cada lado, el texto queda en **181px, unos 17 caracteres por
-> línea**. Para lectura cómoda se buscan 45–75, y aun en una columna angosta 30–40 es el piso.
-> La descripción queda muy picada. **Alternativa a evaluar:** padding solo a la derecha, que es
-> donde están las imágenes — ahí el texto sube a 245px.
+> ✅ **Resuelto el 20/11/2026.** La primera versión era 25/25/50 con 64px de padding de los dos
+> lados, y el texto quedaba en **181px, 17 caracteres por línea** — ilegible. Pasando a **20/30/50
+> con padding solo a la derecha**, queda en **307px, 28 caracteres**. Sigue siendo una columna
+> angosta por diseño, pero ya se lee.
 
 **`section.project-overview`** (288 de ancho, gap 24px entre bloques):
 1. `header.project-heading` (gap 8px): `h1.project-title` (24px `ink`) · `p.project-location`
@@ -1378,6 +1391,9 @@ Ordenadas por cuándo bloquean:
 | **2026-11-19** | **La grilla se lee como 25 / 25 / 50 fluido**, no como los píxeles duros del Figma. Las celdas siguen al ancho del navegador. |
 | **2026-11-19** | **La Home ocupa 100dvh y no scrollea.** |
 | **2026-11-19** | **La columna izquierda de Listado y Ficha queda fija** mientras el resto scrollea. |
+| **2026-11-20** | **La grilla pasa de 25/25/50 a 20/30/50**, con 64px de padding a la derecha de la ficha. El texto pasa de 17 a 28 caracteres por línea. |
+| **2026-11-20** | **El layout interno se implementa con CSS Grid**, no con flex anidado: las fracciones calculadas se rompían al cambiar el ancho de una columna. |
+| **2026-11-20** | **El breadcrumb es solo la flecha y el destino**, sin la palabra "Volver". |
 | **2026-11-19** | **El tipo de contenido se llama `trabajo`, no `proyecto`**, para coincidir con la navegación, el breadcrumb y la ruta. |
 | **2026-11-19** | **El peso base de la tipografía pasa de Light 300 a Regular 400**: el 300 del Figma se veía demasiado frágil. |
 | **2026-11-19** | **Las imágenes van por un loader propio**, no por el optimizador de Next: los bytes salen del CDN de Sanity y no gastan CPU del Worker. |

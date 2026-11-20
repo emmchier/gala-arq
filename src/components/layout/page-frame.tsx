@@ -6,12 +6,16 @@ import { SiteFooter } from "./site-footer";
  * Cascaron de pagina (spec §5.1).
  *
  * El contenido vive dentro de margenes laterales de 64px (20 en mobile), y
- * adentro la grilla es FLUIDA: 25 / 25 / 50 (spec §4.5).
+ * adentro la grilla es FLUIDA: 20 / 30 / 50 (spec §4.5).
  *
- * - "home": ocupa 100dvh exactas, sin scroll. La navegacion toma el primer
- *   25% y el carrusel el 70% alineado a la derecha.
- * - "inner": la columna izquierda queda FIJA mientras el resto scrollea.
- *   Por eso el breadcrumb vive arriba de esa columna y PREV/NEXT abajo.
+ * - "inner" usa **CSS Grid de tres columnas**, con los porcentajes literales
+ *   de la spec. Antes era flex anidado y cada columna se calculaba como una
+ *   fraccion del resto (`calc(var(--col-info)/0.75)`): esa cuenta se rompia
+ *   sola cada vez que cambiaba el ancho de la navegacion. Con grid, los
+ *   numeros del codigo son los mismos que los de la spec.
+ *   La primera columna queda FIJA mientras el resto scrollea.
+ * - "home" ocupa 100dvh exactas, sin scroll: la navegacion toma el primer
+ *   20% y el carrusel el 70% alineado a la derecha.
  */
 export function PageFrame({
   variant,
@@ -21,7 +25,11 @@ export function PageFrame({
   children,
 }: {
   variant: "home" | "inner";
-  config: { nombreEstudio: string | null; instagram?: string | null; behance?: string | null };
+  config: {
+    nombreEstudio: string | null;
+    instagram?: string | null;
+    behance?: string | null;
+  };
   sidebarTop?: ReactNode;
   sidebarBottom?: ReactNode;
   children: ReactNode;
@@ -49,17 +57,21 @@ export function PageFrame({
 
       <main
         id="contenido"
-        className={`my-[var(--header-gap)] flex min-h-0 flex-1 flex-col gap-8 lg:flex-row lg:gap-0 ${
-          isHome ? "" : "items-start"
-        }`}
+        className={
+          isHome
+            ? "my-[var(--header-gap)] flex min-h-0 flex-1 flex-col gap-8 lg:flex-row"
+            : "my-[var(--header-gap)] flex flex-1 flex-col gap-8 lg:grid lg:grid-cols-[var(--col-nav)_var(--col-info)_var(--col-media)] lg:items-start lg:gap-0"
+        }
       >
         {(sidebarTop || sidebarBottom) && (
           <div
-            className={`flex shrink-0 flex-col justify-between gap-8 lg:w-[var(--col-nav)] lg:gap-0 ${
+            className={`flex shrink-0 flex-col justify-between gap-8 lg:gap-0 ${
               isHome
-                ? "order-2 lg:order-1"
-                : // columna fija: se queda quieta mientras la derecha scrollea
-                  "order-1 lg:sticky lg:top-[var(--header-gap)] lg:h-[calc(100dvh-var(--header-h)-var(--header-gap)*2-var(--footer-h))]"
+                ? "order-2 lg:order-1 lg:w-[var(--col-nav)]"
+                : // columna fija: se queda quieta mientras la derecha scrollea.
+                  // Sin `order`: en grid tambien reordena, y mandaria la
+                  // navegacion a la ultima columna.
+                  "lg:sticky lg:top-[var(--header-gap)] lg:h-[calc(100dvh-var(--header-h)-var(--header-gap)*2-var(--footer-h))]"
             }`}
           >
             {sidebarTop ?? <span />}
@@ -67,15 +79,13 @@ export function PageFrame({
           </div>
         )}
 
-        <div
-          className={
-            isHome
-              ? "order-1 flex min-h-0 w-full flex-1 flex-col lg:order-2 lg:ml-auto lg:w-[var(--col-featured)] lg:flex-none"
-              : "order-2 flex w-full flex-col lg:flex-row"
-          }
-        >
-          {children}
-        </div>
+        {isHome ? (
+          <div className="order-1 flex min-h-0 w-full flex-1 flex-col lg:order-2 lg:ml-auto lg:w-[var(--col-featured)] lg:flex-none">
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </main>
 
       <SiteFooter
