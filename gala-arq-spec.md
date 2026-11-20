@@ -573,8 +573,15 @@ Cambia según la pantalla:
 - **Listado y Ficha:** `nav.breadcrumb` arriba (**`← TRABAJOS`**). En la Ficha, además,
   `nav.project-pagination` (`PREV · NEXT`) **abajo del todo**.
 
-> 📌 **El breadcrumb es solo la flecha y el destino**, sin la palabra "Volver" que tenía el Figma:
-> la flecha ya lo dice (decisión del usuario, 19/11/2026).
+> 📌 **El breadcrumb sigue el orden de navegación** (decisión del usuario, 20/11/2026):
+>
+> | Pantalla | Breadcrumb | Clickeable |
+> |---|---|---|
+> | Listado | `← INICIO / TRABAJOS` | solo **INICIO**; "Trabajos" es la página actual |
+> | Ficha | `← INICIO / TRABAJOS` | **los dos**; el nombre de la obra no aparece |
+>
+> Sin la palabra "Volver" que tenía el Figma: la flecha ya lo dice. La flecha apunta al último
+> item navegable, que es el "volver" real de esa pantalla.
 
 > **La navegación principal solo está en la Home.** En Listado y Ficha, el sidebar lo ocupa el
 > breadcrumb. Es una decisión fuerte del diseño: se navega volviendo, no saltando.
@@ -631,6 +638,17 @@ Cambia según la pantalla:
 
 Es el **único componente con estado de cliente de todo el sitio** (§7.3), y por eso se construye
 último en la fase 1.
+
+### Dos cosas que el autoplay obliga
+
+**Botón de pausa explícito**, al otro extremo de la fila de barras. Con autoplay no es un extra:
+el carrusel tiene que poder detenerse. Es distinto de la pausa por hover — **sobrevive a que el
+puntero se vaya**.
+
+⚠️ **El carrusel se reinicia cada vez que se monta.** El store de Zustand sobrevive a la
+navegación, así que al volver a la Home conservaba el índice y la pausa de la vez anterior, y
+quedaba congelado en una diapositiva del medio. Verificado: se va en la 2, se vuelve, arranca en
+la 1 y sigue avanzando.
 
 ⚠️ **Autoplay y accesibilidad:** al avanzar solo, hace falta que se **pause al hover y al foco**,
 que respete `prefers-reduced-motion` (§4.6) y que se pueda parar. Un carrusel que se mueve solo

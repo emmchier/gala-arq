@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { SanityImage, type SanityImageSource } from "@/components/sanity-image";
 import { useCarousel } from "@/stores/carousel";
@@ -53,19 +53,28 @@ export function FeaturedCarousel({
   const { index, tick, paused } = useCarousel(
     useShallow((s) => ({ index: s.index, tick: s.tick, paused: s.paused })),
   );
-  const { setTotal, avanzarAuto, irA, mover, setPaused } = useCarousel(
+  const { setTotal, avanzarAuto, irA, mover, setPaused, reset } = useCarousel(
     useShallow((s) => ({
       setTotal: s.setTotal,
       avanzarAuto: s.avanzarAuto,
       irA: s.irA,
       mover: s.mover,
       setPaused: s.setPaused,
+      reset: s.reset,
     })),
   );
+  // Pausa explicita del boton: sobrevive al hover, a diferencia de la otra.
+  const [pausaManual, setPausaManual] = useState(false);
 
   const reducedRef = useRef(false);
 
-  useEffect(() => setTotal(total), [total, setTotal]);
+  // El store sobrevive a la navegacion, asi que al volver a la Home el
+  // carrusel conservaba el indice y la pausa de la vez anterior. Arranca de
+  // cero cada vez que se monta.
+  useEffect(() => {
+    reset();
+    setTotal(total);
+  }, [total, reset, setTotal]);
 
   // Con `prefers-reduced-motion` el carrusel NO avanza solo (spec §4.6).
   useEffect(() => {
@@ -82,10 +91,10 @@ export function FeaturedCarousel({
   // Avance automatico. `tick` esta en las dependencias a proposito: cualquier
   // navegacion manual reinicia el temporizador junto con la barra.
   useEffect(() => {
-    if (paused || reducedRef.current || total < 2) return;
+    if (paused || pausaManual || reducedRef.current || total < 2) return;
     const t = setTimeout(avanzarAuto, SLIDE_MS);
     return () => clearTimeout(t);
-  }, [index, tick, paused, total, avanzarAuto]);
+  }, [index, tick, paused, pausaManual, total, avanzarAuto]);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowRight") mover(1);
@@ -117,7 +126,8 @@ export function FeaturedCarousel({
       onBlurCapture={() => setPaused(false)}
     >
       {/* Barras de progreso: riel gris, el color carga encima (spec §4.4) */}
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
         {trabajos.map((t, i) => (
           <button
             key={t._id}
@@ -139,13 +149,36 @@ export function FeaturedCarousel({
                     ? {
                         animation:
                           "carousel-progress var(--duration-slide) linear forwards",
-                        animationPlayState: paused ? "paused" : "running",
+                        animationPlayState:
+                          paused || pausaManual ? "paused" : "running",
                       }
                     : { width: "0%" }
               }
             />
           </button>
         ))}
+        </div>
+
+        {/* Pausa explicita. Con autoplay no es un extra: el carrusel tiene
+            que poder detenerse (spec §5.2). */}
+        <button
+          type="button"
+          onClick={() => setPausaManual((p) => !p)}
+          aria-pressed={pausaManual}
+          aria-label={pausaManual ? m.reanudar : m.pausar}
+          className="text-quiet transition-colors duration-fast ease-site hover:text-ink"
+        >
+          {pausaManual ? (
+            <svg aria-hidden viewBox="0 0 12 12" className="size-3" fill="currentColor">
+              <path d="M2 1l9 5-9 5z" />
+            </svg>
+          ) : (
+            <svg aria-hidden viewBox="0 0 12 12" className="size-3" fill="currentColor">
+              <rect x="2" y="1" width="3" height="10" rx="0.5" />
+              <rect x="7" y="1" width="3" height="10" rx="0.5" />
+            </svg>
+          )}
+        </button>
       </div>
 
       {/* Imagenes: crossfade, no desplazamiento (spec §4.6) */}

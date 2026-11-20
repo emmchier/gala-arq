@@ -32,8 +32,10 @@ export async function TrabajosPage({ idioma }: { idioma: Idioma }) {
       sidebarTop={
         <Breadcrumb
           idioma={idioma}
-          backHref={rutaHome(idioma)}
-          current={m.nav.trabajos}
+          migas={[
+            { label: m.inicio, href: rutaHome(idioma) },
+            { label: m.nav.trabajos, href: null },
+          ]}
         />
       }
     >

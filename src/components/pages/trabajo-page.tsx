@@ -9,7 +9,7 @@ import { ProjectPagination } from "@/components/trabajo/project-pagination";
 import { getConfiguracion, getTrabajo } from "@/sanity/queries";
 import { IDS_IDIOMA, type Idioma } from "@/sanity/i18n";
 import { t } from "@/lib/mensajes";
-import { rutaTrabajo, rutaTrabajos } from "@/lib/routes";
+import { rutaHome, rutaTrabajo, rutaTrabajos } from "@/lib/routes";
 
 /**
  * Ficha de trabajo (spec §5.4). Variante 07: la galeria es una cuadricula.
@@ -49,8 +49,10 @@ export async function TrabajoPage({
       sidebarTop={
         <Breadcrumb
           idioma={idioma}
-          backHref={rutaTrabajos(idioma)}
-          current={m.nav.trabajos}
+          migas={[
+            { label: m.inicio, href: rutaHome(idioma) },
+            { label: m.nav.trabajos, href: rutaTrabajos(idioma) },
+          ]}
         />
       }
       sidebarBottom={
