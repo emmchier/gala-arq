@@ -1006,10 +1006,15 @@ Con el prefijo de idioma para inglés (§9.3).
 
 ## 7.3 Dónde vive el estado (y por qué casi no hay)
 
-Con RSC, la mayoría del sitio **no tiene estado de cliente**. Zustand entra solo para:
-- el **carrusel** de la Home (índice activo),
-- el **lightbox** de la galería (foto abierta, abierto/cerrado),
-- el **menú mobile** (cuando se diseñe).
+Con RSC, la mayoría del sitio **no tiene estado de cliente**.
+
+> ⚠️ **Zustand todavía no se usa, y conviene que siga así.** Este spec decía que el carrusel
+> guardaría su índice ahí. Al construirlo (paso 1.6) quedó claro que **no hace falta**: ese índice
+> no lo lee nadie más que el propio carrusel, así que un store sería ceremonia sin beneficio.
+> Está con `useState`, igual que el menú mobile.
+>
+> **Zustand entra cuando haya estado que CRUCE componentes**, no antes. El candidato real es el
+> lightbox de la galería, si alguna vez se abre desde fuera de ella.
 
 **No meter el contenido de Sanity en Zustand.** Viaja por props desde el servidor. Un store que
 espeja datos del servidor es un bug esperando a pasar.
