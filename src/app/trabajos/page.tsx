@@ -5,7 +5,7 @@ import { ProjectGrid } from "@/components/layout/project-grid";
 import { SanityImage } from "@/components/sanity-image";
 import { sanityFetch, TAGS } from "@/sanity/fetch";
 import { TRABAJOS_LISTADO_QUERY } from "@/sanity/queries/trabajo";
-import { CONFIGURACION_QUERY } from "@/sanity/queries/configuracion";
+import { getConfiguracion } from "@/sanity/queries";
 
 /**
  * Listado de trabajos (spec §5.3).
@@ -14,7 +14,7 @@ import { CONFIGURACION_QUERY } from "@/sanity/queries/configuracion";
 export default async function TrabajosPage() {
   const [trabajos, config] = await Promise.all([
     sanityFetch({ query: TRABAJOS_LISTADO_QUERY, tags: [TAGS.trabajo] }),
-    sanityFetch({ query: CONFIGURACION_QUERY, tags: [TAGS.configuracion] }),
+    getConfiguracion(),
   ]);
 
   return (

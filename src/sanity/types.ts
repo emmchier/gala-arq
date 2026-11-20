@@ -422,7 +422,7 @@ export type TRABAJOS_DESTACADOS_QUERY_RESULT = Array<{
 
 // Source: src/sanity/queries/trabajo.ts
 // Variable: TRABAJO_QUERY
-// Query: *[_type == "trabajo" && slug.current == $slug][0]  {    _id,    titulo,    "slug": slug.current,    ubicacion,    anio,    descripcion,    creditos[]{ _key, rol, valor },    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    galeria[] {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    seoTitle,    seoDescription,    orderRank  }
+// Query: *[_type == "trabajo" && slug.current == $slug][0]  {    _id,    titulo,    "slug": slug.current,    ubicacion,    anio,    descripcion,    creditos[]{ _key, rol, valor },    portada {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    galeria[] {  ...,  asset->{    _id,    url,    metadata { lqip, dimensions { width, height, aspectRatio } }  }},    seoTitle,    seoDescription,    orderRank,    // Los vecinos viajan en la MISMA ida (spec §8.5). Antes eran una query    // aparte por ficha, que duplicaba los requests sin necesidad.    "anterior": *[_type == "trabajo" && defined(slug.current) && orderRank < ^.orderRank]      | order(orderRank desc)[0]{ titulo, "slug": slug.current },    "siguiente": *[_type == "trabajo" && defined(slug.current) && orderRank > ^.orderRank]      | order(orderRank asc)[0]{ titulo, "slug": slug.current }  }
 export type TRABAJO_QUERY_RESULT = {
   _id: string;
   titulo: string | null;
@@ -494,12 +494,6 @@ export type TRABAJO_QUERY_RESULT = {
   seoTitle: string | null;
   seoDescription: string | null;
   orderRank: string | null;
-} | null;
-
-// Source: src/sanity/queries/trabajo.ts
-// Variable: TRABAJO_VECINOS_QUERY
-// Query: {    "anterior": *[_type == "trabajo" && defined(slug.current) && orderRank < $orderRank]      | order(orderRank desc)[0]{ titulo, "slug": slug.current },    "siguiente": *[_type == "trabajo" && defined(slug.current) && orderRank > $orderRank]      | order(orderRank asc)[0]{ titulo, "slug": slug.current }  }
-export type TRABAJO_VECINOS_QUERY_RESULT = {
   anterior: {
     titulo: string | null;
     slug: string | null;
@@ -508,7 +502,7 @@ export type TRABAJO_VECINOS_QUERY_RESULT = {
     titulo: string | null;
     slug: string | null;
   } | null;
-};
+} | null;
 
 // Source: src/sanity/queries/trabajo.ts
 // Variable: TRABAJOS_SLUGS_QUERY
@@ -521,8 +515,7 @@ declare global {
     '\n  *[_type == "configuracion"][0]\n  {\n    nombreEstudio,\n    textoEstudio,\n    retrato {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    email,\n    telefono,\n    direccion,\n    instagram,\n    behance,\n    cv,\n    textoLegal\n  }\n': CONFIGURACION_QUERY_RESULT;
     '\n  *[_type == "trabajo" && defined(slug.current)]\n  | order(orderRank)\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    anio,\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n}\n  }\n': TRABAJOS_LISTADO_QUERY_RESULT;
     '\n  *[_type == "trabajo" && destacado == true && defined(slug.current)]\n  | order(orderRank)\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n}\n  }\n': TRABAJOS_DESTACADOS_QUERY_RESULT;
-    '\n  *[_type == "trabajo" && slug.current == $slug][0]\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    ubicacion,\n    anio,\n    descripcion,\n    creditos[]{ _key, rol, valor },\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    galeria[] {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    seoTitle,\n    seoDescription,\n    orderRank\n  }\n': TRABAJO_QUERY_RESULT;
-    '\n  {\n    "anterior": *[_type == "trabajo" && defined(slug.current) && orderRank < $orderRank]\n      | order(orderRank desc)[0]{ titulo, "slug": slug.current },\n    "siguiente": *[_type == "trabajo" && defined(slug.current) && orderRank > $orderRank]\n      | order(orderRank asc)[0]{ titulo, "slug": slug.current }\n  }\n': TRABAJO_VECINOS_QUERY_RESULT;
+    '\n  *[_type == "trabajo" && slug.current == $slug][0]\n  {\n    _id,\n    titulo,\n    "slug": slug.current,\n    ubicacion,\n    anio,\n    descripcion,\n    creditos[]{ _key, rol, valor },\n    portada {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    galeria[] {\n  ...,\n  asset->{\n    _id,\n    url,\n    metadata { lqip, dimensions { width, height, aspectRatio } }\n  }\n},\n    seoTitle,\n    seoDescription,\n    orderRank,\n\n    // Los vecinos viajan en la MISMA ida (spec \xA78.5). Antes eran una query\n    // aparte por ficha, que duplicaba los requests sin necesidad.\n    "anterior": *[_type == "trabajo" && defined(slug.current) && orderRank < ^.orderRank]\n      | order(orderRank desc)[0]{ titulo, "slug": slug.current },\n    "siguiente": *[_type == "trabajo" && defined(slug.current) && orderRank > ^.orderRank]\n      | order(orderRank asc)[0]{ titulo, "slug": slug.current }\n  }\n': TRABAJO_QUERY_RESULT;
     '\n  *[_type == "trabajo" && defined(slug.current)].slug.current\n': TRABAJOS_SLUGS_QUERY_RESULT;
   }
 }

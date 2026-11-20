@@ -51,16 +51,13 @@ export const TRABAJO_QUERY = defineQuery(`
     galeria[] ${IMAGEN},
     seoTitle,
     seoDescription,
-    orderRank
-  }
-`);
+    orderRank,
 
-/** PREV y NEXT navegan el orden curado, no la fecha (spec §5.4). */
-export const TRABAJO_VECINOS_QUERY = defineQuery(`
-  {
-    "anterior": *[_type == "trabajo" && defined(slug.current) && orderRank < $orderRank]
+    // Los vecinos viajan en la MISMA ida (spec §8.5). Antes eran una query
+    // aparte por ficha, que duplicaba los requests sin necesidad.
+    "anterior": *[_type == "trabajo" && defined(slug.current) && orderRank < ^.orderRank]
       | order(orderRank desc)[0]{ titulo, "slug": slug.current },
-    "siguiente": *[_type == "trabajo" && defined(slug.current) && orderRank > $orderRank]
+    "siguiente": *[_type == "trabajo" && defined(slug.current) && orderRank > ^.orderRank]
       | order(orderRank asc)[0]{ titulo, "slug": slug.current }
   }
 `);

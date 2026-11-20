@@ -8,12 +8,8 @@ import { ProjectCredits } from "@/components/trabajo/project-credits";
 import { ProjectDescription } from "@/components/trabajo/project-description";
 import { ProjectPagination } from "@/components/trabajo/project-pagination";
 import { sanityFetch, TAGS } from "@/sanity/fetch";
-import {
-  TRABAJO_QUERY,
-  TRABAJO_VECINOS_QUERY,
-  TRABAJOS_SLUGS_QUERY,
-} from "@/sanity/queries/trabajo";
-import { CONFIGURACION_QUERY } from "@/sanity/queries/configuracion";
+import { TRABAJOS_SLUGS_QUERY } from "@/sanity/queries/trabajo";
+import { getConfiguracion, getTrabajo } from "@/sanity/queries";
 
 export async function generateStaticParams() {
   const slugs = await sanityFetch({
@@ -27,11 +23,7 @@ export async function generateMetadata({
   params,
 }: PageProps<"/trabajos/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const t = await sanityFetch({
-    query: TRABAJO_QUERY,
-    params: { slug },
-    tags: [TAGS.trabajo],
-  });
+  const t = await getTrabajo(slug);
   if (!t) return {};
 
   return {
@@ -50,21 +42,11 @@ export default async function TrabajoPage({
   const { slug } = await params;
 
   const [trabajo, config] = await Promise.all([
-    sanityFetch({
-      query: TRABAJO_QUERY,
-      params: { slug },
-      tags: [TAGS.trabajo],
-    }),
-    sanityFetch({ query: CONFIGURACION_QUERY, tags: [TAGS.configuracion] }),
+    getTrabajo(slug),
+    getConfiguracion(),
   ]);
 
   if (!trabajo) notFound();
-
-  const vecinos = await sanityFetch({
-    query: TRABAJO_VECINOS_QUERY,
-    params: { orderRank: trabajo.orderRank ?? "" },
-    tags: [TAGS.trabajo],
-  });
 
   return (
     <PageFrame
@@ -73,8 +55,8 @@ export default async function TrabajoPage({
       sidebarTop={<Breadcrumb backHref="/trabajos" current="Trabajos" />}
       sidebarBottom={
         <ProjectPagination
-          anterior={vecinos.anterior}
-          siguiente={vecinos.siguiente}
+          anterior={trabajo.anterior}
+          siguiente={trabajo.siguiente}
         />
       }
     >

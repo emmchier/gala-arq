@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { SanityImage, type SanityImageSource } from "@/components/sanity-image";
+import { useCarousel } from "@/stores/carousel";
 
 /** Paleta de las barras: el color sale de la posicion (spec §4.4). */
 const FILL = [
@@ -29,46 +31,57 @@ type Destacado = {
 /**
  * Carrusel automatico de la Home (spec §5.2).
  *
- * Es el **unico componente con estado de cliente de todo el sitio**, y por eso
- * se construye ultimo.
- *
- * Estado local, no Zustand: el indice no lo lee nadie mas que este componente.
- * Ver la nota en la spec §7.3.
+ * Rendimiento: las imagenes se montan **todas una sola vez** y se cruzan por
+ * `opacity`, que es una propiedad compuesta por el GPU. No se remonta nada al
+ * cambiar de diapositiva y no hay layout ni paint: solo composite.
+ * El progreso lo anima CSS, no JS, asi que no hay `requestAnimationFrame` ni
+ * timers por frame corriendo en el hilo principal.
  */
 export function FeaturedCarousel({ trabajos }: { trabajos: Destacado[] }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [reduced, setReduced] = useState(false);
   const total = trabajos.length;
 
-  const ir = useCallback(
-    (n: number) => setIndex(((n % total) + total) % total),
-    [total],
+  const { index, tick, paused } = useCarousel(
+    useShallow((s) => ({ index: s.index, tick: s.tick, paused: s.paused })),
   );
+  const { setTotal, avanzarAuto, irA, mover, setPaused } = useCarousel(
+    useShallow((s) => ({
+      setTotal: s.setTotal,
+      avanzarAuto: s.avanzarAuto,
+      irA: s.irA,
+      mover: s.mover,
+      setPaused: s.setPaused,
+    })),
+  );
+
+  const reducedRef = useRef(false);
+
+  useEffect(() => setTotal(total), [total, setTotal]);
 
   // Con `prefers-reduced-motion` el carrusel NO avanza solo (spec §4.6).
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduced(mq.matches);
+    const sync = () => {
+      reducedRef.current = mq.matches;
+      if (mq.matches) setPaused(true);
+    };
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
-  }, []);
+  }, [setPaused]);
 
-  // Avance automatico. Se detiene al pausar y con reduced motion.
+  // Avance automatico. `tick` esta en las dependencias a proposito: cualquier
+  // navegacion manual reinicia el temporizador junto con la barra.
   useEffect(() => {
-    if (paused || reduced || total < 2) return;
-    const t = setTimeout(() => ir(index + 1), SLIDE_MS);
+    if (paused || reducedRef.current || total < 2) return;
+    const t = setTimeout(avanzarAuto, SLIDE_MS);
     return () => clearTimeout(t);
-  }, [index, paused, reduced, total, ir]);
+  }, [index, tick, paused, total, avanzarAuto]);
 
-  // Teclado: flechas izquierda y derecha.
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowRight") ir(index + 1);
-    if (e.key === "ArrowLeft") ir(index - 1);
+    if (e.key === "ArrowRight") mover(1);
+    if (e.key === "ArrowLeft") mover(-1);
   };
 
-  // Tap o swipe sobre la imagen.
   const inicio = useRef<number | null>(null);
   const onPointerDown = (e: React.PointerEvent) => {
     inicio.current = e.clientX;
@@ -77,8 +90,7 @@ export function FeaturedCarousel({ trabajos }: { trabajos: Destacado[] }) {
     if (inicio.current === null) return;
     const dx = e.clientX - inicio.current;
     inicio.current = null;
-    if (Math.abs(dx) >= SWIPE_PX) ir(index + (dx < 0 ? 1 : -1));
-    else ir(index + 1); // tap
+    mover(Math.abs(dx) >= SWIPE_PX ? (dx < 0 ? 1 : -1) : 1);
   };
 
   if (total === 0) return null;
@@ -100,21 +112,23 @@ export function FeaturedCarousel({ trabajos }: { trabajos: Destacado[] }) {
           <button
             key={t._id}
             type="button"
-            onClick={() => ir(i)}
+            onClick={() => irA(i)}
             aria-label={`Ir a ${t.titulo ?? `trabajo ${i + 1}`}`}
             aria-current={i === index ? "true" : undefined}
             className="h-[3px] w-14 overflow-hidden rounded-full bg-rail"
           >
             <span
-              // la `key` remonta el elemento y reinicia la animacion
-              key={i === index ? `${index}-on` : "off"}
+              // `tick` en la key: cada navegacion remonta el elemento y la
+              // animacion arranca de cero.
+              key={i === index ? `on-${tick}` : "off"}
               className={`block h-full rounded-full ${FILL[i % FILL.length]}`}
               style={
-                i < index || (i === index && reduced)
+                i < index
                   ? { width: "100%" }
                   : i === index
                     ? {
-                        animation: `carousel-progress var(--duration-slide) linear forwards`,
+                        animation:
+                          "carousel-progress var(--duration-slide) linear forwards",
                         animationPlayState: paused ? "paused" : "running",
                       }
                     : { width: "0%" }
@@ -152,13 +166,12 @@ export function FeaturedCarousel({ trabajos }: { trabajos: Destacado[] }) {
           </div>
         ))}
 
-        {/* Boton siguiente: circular de 42px, sobre el borde derecho */}
         {total > 1 ? (
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              ir(index + 1);
+              mover(1);
             }}
             onPointerDown={(e) => e.stopPropagation()}
             onPointerUp={(e) => e.stopPropagation()}
@@ -181,12 +194,15 @@ export function FeaturedCarousel({ trabajos }: { trabajos: Destacado[] }) {
 
       {/* Epigrafe del trabajo actual */}
       {actual.slug ? (
-        <Link
-          href={`/trabajos/${actual.slug}`}
-          className="shrink-0 text-body text-ink transition-colors duration-fast ease-site hover:text-quiet"
-        >
-          {actual.titulo}
-        </Link>
+        <div className="flex shrink-0 flex-col gap-1">
+          <p className="text-body text-ink">{actual.titulo}</p>
+          <Link
+            href={`/trabajos/${actual.slug}`}
+            className="w-fit text-body text-quiet underline underline-offset-4 transition-colors duration-fast ease-site hover:text-ink"
+          >
+            Ver caso
+          </Link>
+        </div>
       ) : null}
     </section>
   );
